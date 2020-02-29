@@ -7,13 +7,15 @@ class channel(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name='prefix', command_prefix="!")
-    async def cmd_check_current_prefix(self, ctx):
-        """
-        現在のprefixを確認する。
-        コマンドは`!prefix`固定（現在のprefixの影響を受けない）
-        """
-        await ctx.send(f"現在のプレフィックスは`{self.bot.command_prefix}`です。")
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.content == "!prefix":
+            """
+            現在のprefixを確認する。
+            コマンドは`!prefix`固定（現在のprefixの影響を受けない）
+            """
+            await message.channel.send(
+                f"現在のプレフィックスは`{self.bot.command_prefix}`です。")
 
     @commands.command(name='set_prefix')
     async def cmd_set_prefix(self, ctx, *args):
@@ -28,7 +30,7 @@ class channel(commands.Cog):
         ## cloudcubeを使用する場合の設定
         else:
             s3_manager.save_text(args[0], "prefix")
-            self.bot.command_prefix=args[0]
+            self.bot.command_prefix = args[0]
             msg = f"Current prefix: `{self.bot.command_prefix}`"
         ##
 
