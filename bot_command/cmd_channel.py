@@ -28,13 +28,14 @@ class channel(commands.Cog):
         ## cloudcubeを使用する場合の設定
         else:
             s3_manager.save_text(args[0], "prefix")
-            msg = f"Current prefix: `{args[0]}`"
+            self.bot.command_prefix=args[0]
+            msg = f"Current prefix: `{self.bot.command_prefix}`"
         ##
 
         ## dbを使用する場合の設定
         #elif db_manager.set_prefix(args[0]):
         #    self.bot.command_prefix=args[0]
-        #    msg=f"Current prefix: `{args[0]}`"
+        #    msg=f"Current prefix: `{self.bot.command_prefix}`"
         ##
 
         await ctx.send(msg)
