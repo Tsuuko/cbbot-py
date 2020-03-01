@@ -1,36 +1,68 @@
 from discord.ext import commands
 from datetime import datetime
-import requests
+import discord
+import clanbattle_manager
 
 
 class clanbattle(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        
-def fetch_status():
-    """
-    解析サイト<https://redive.estertion.win> からクラバト情報を取ってくる
-    return {
-        "cb_start": datetime,
-        "cb_end": datetime,
-        "cb_days": int
-    }
-    """
-    # クラバト開催情報取得
-    r = requests.get(
-        "https://redive.estertion.win/ver_log_redive/?page=1&filter=clan_battle"
-    ).json()
+        self.sheet = clanbattle_manager.spreadsheet()
 
-    # クラバト開始日取得
-    cb_start = r["data"][0]["clan_battle"][0]["start"]
-    cb_start = datetime.strptime(cb_start, "%Y/%m/%d %H:%M:%S")
+    @commands.command(name='regist')
+    async def cmd_regist(self, ctx, *args):
+        if len(args) == 0:
+            try:
+                result = self.sheet.add_user(ctx.author.display_name)
+                embed = discord.Embed(
+                    title="✅ 登録完了",
+                    description=
+                    f"[ **{ctx.author.display_name}** さんを{result}行目に登録しました。 ]",
+                    color=0x00ff00)
+                embed.set_footer(text=self.bot.user.display_name,
+                                 icon_url=self.bot.user.avatar_url)
 
-    # クラバト終了日取得
-    cb_end = r["data"][0]["clan_battle"][0]["end"]
-    cb_end = datetime.strptime(cb_end, "%Y/%m/%d %H:%M:%S")
+            except Exception as e:
+                embed = discord.Embed(title="❎ エラー",
+                                      description=(str(e)),
+                                      color=0xff0000)
+                embed.set_footer(text=self.bot.user.display_name,
+                                 icon_url=self.bot.user.avatar_url)
 
-    # クラバト開催日数
-    cb_days = (cb_end - cb_start).days + 1
+        elif len(args) == 2 and args[0] == "-u":
+            try:
+                result = self.sheet.add_user(args[1])
+                embed = discord.Embed(
+                    title="✅ 登録完了",
+                    description=
+                    f"[ **{args[1]}** さんを{result}行目に登録しました。 ]",
+                    color=0x00ff00)
+                embed.set_footer(text=self.bot.user.display_name,
+                                 icon_url=self.bot.user.avatar_url)
+            except Exception as e:
+                embed = discord.Embed(title="❎ エラー",
+                                      description=str(e),
+                                      color=0xff0000)
+                embed.set_footer(text=self.bot.user.display_name,
+                                 icon_url=self.bot.user.avatar_url)
 
-    return {"cb_start": cb_start, "cb_end": cb_end, "cb_days": cb_days}
+        await ctx.send(embed=embed)
 
+    @commands.command(name='status')
+    async def cmd_getstatus(self, ctx):
+        status = clanbattle_manager.fetch_status()
+        embed = discord.Embed(title="⚔クランバトル開催情報⚔", color=0x00ffff)
+        embed.add_field(name="🕔開始日時",
+                        value=status["cb_start"].strftime('%Y/%m/%d %H:%M'),
+                        inline=False)
+        embed.add_field(name="🕛終了日時",
+                        value=status["cb_end"].strftime('%Y/%m/%d %H:%M'),
+                        inline=False)
+        embed.add_field(name="🗓開催期間",
+                        value=f"{status['cb_days']} 日間",
+                        inline=False)
+        await ctx.send(embed=embed)
+
+    @commands.command(name='setstatus')
+    async def cmd_setstatus(self, ctx):
+        pass

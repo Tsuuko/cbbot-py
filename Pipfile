@@ -13,6 +13,8 @@ discord-py = "*"
 requests = "*"
 pymongo = "*"
 boto3 = "*"
+gspread = "*"
+oauth2client = "*"
 
 [requires]
 python_version = "3.8"

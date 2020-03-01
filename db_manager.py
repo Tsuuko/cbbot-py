@@ -7,8 +7,9 @@ from urllib.parse import urlparse
 import load_settings
 
 
-DB_NAME==urlparse(load_settings.MONGODB_URI).path[1:]
-client=MongoClient(load_settings.MONGODB_URI+"?retryWrites=false")
+MONGODB_URI=load_settings.MONGODB_URI
+DB_NAME=urlparse(MONGODB_URI).path[1:]
+client=MongoClient(MONGODB_URI+"?retryWrites=false")
 db=client[DB_NAME]
 
 def init_data():
