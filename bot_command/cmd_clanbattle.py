@@ -163,7 +163,7 @@ class clanbattle(commands.Cog):
                         f"クラバト{self.status['cb_days']-cb_remaining_days}日目です！！"
                     )
                     print(
-                        f"定期実行: set_cbstatus: self.cb_is_open={self.cb_is_open}, self.cb_remaining_days={self.cb_remaining_days}"
+                        f"定期実行: set_cbstatus: self.cb_is_open={self.cb_is_open} -> {cb_is_open}, self.cb_remaining_days={self.cb_remaining_days} -> {cb_remaining_days}"
                     )
             # 現在の開催状況と取得した開催情報が異なる（非開催中->開催中 or 開催中->非開催中）
             elif self.cb_is_open != cb_is_open:
