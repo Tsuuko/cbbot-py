@@ -42,6 +42,5 @@ async def on_ready():
 
 bot.add_cog(channel(bot))
 bot.add_cog(clanbattle(bot))
-
 # Botの起動とDiscordサーバーへの接続
 bot.run(TOKEN)

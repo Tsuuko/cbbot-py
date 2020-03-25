@@ -84,7 +84,6 @@ def set_cbstatus(status):
         return False, status['cb_days'] - now_cbday
 
 
-
 class spreadsheet:
     def __init__(self):
         self.__authorize()

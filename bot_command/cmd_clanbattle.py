@@ -136,35 +136,51 @@ class clanbattle(commands.Cog):
     # 定期的に実行される #
     ####################
 
-    @tasks.loop(seconds=3600)
+    @tasks.loop(seconds=3600.0)
     async def check_cbstatus(self):
         """
         1時間（3600秒）ごとにクラバト開催情報を取ってくる。
         """
         self.status = clanbattle_manager.fetch_status()
 
-    @tasks.loop(seconds=10)
+    @tasks.loop(seconds=10.0)
+    #@commands.command(name='chk')
     async def set_cbstatus(self):
         """
         10秒毎にクランバトル開催情報を設定する。
         """
-        cb_is_open, cb_remaining_days = clanbattle_manager.set_status(
-            self.status)
-        channel = self.bot.get_channel(CB_NOTIFICATION_CHANNEL_ID)
+        # BOT動作中か確認（起動前にchannel.sendすると動作が止まってしまう）
+        if not self.bot.is_ready():
+            print("定期実行: set_cbstatus(): BOTログイン前")
+        else:
+            cb_is_open, cb_remaining_days = clanbattle_manager.set_cbstatus(
+                self.status)
+            # 現在の開催状況と取得した開催情報が同じ
+            if (self.cb_is_open == cb_is_open):
+                if self.cb_remaining_days > cb_remaining_days:
+                    channel = self.bot.get_channel(CB_NOTIFICATION_CHANNEL_ID)
+                    await channel.send(
+                        f"クラバト{self.status['cb_days']-cb_remaining_days}日目です！！"
+                    )
+                    print(
+                        f"定期実行: set_cbstatus: self.cb_is_open={self.cb_is_open}, self.cb_remaining_days={self.cb_remaining_days}"
+                    )
+            # 現在の開催状況と取得した開催情報が異なる（非開催中->開催中 or 開催中->非開催中）
+            elif self.cb_is_open != cb_is_open:
+                # 非開催中->開催中
+                if (self.cb_is_open == False) and (cb_is_open == True):
+                    channel = self.bot.get_channel(CB_NOTIFICATION_CHANNEL_ID)
+                    await channel.send("クラバトが開始しました！！")
+                # 開催中->非開催中
+                elif (self.cb_is_open == True) and (cb_is_open == False):
+                    channel = self.bot.get_channel(CB_NOTIFICATION_CHANNEL_ID)
+                    await channel.send("クラバトが終了しました！！")
+                print(
+                    f"定期実行: set_cbstatus: self.cb_is_open={self.cb_is_open}, self.cb_remaining_days={self.cb_remaining_days}"
+                )
 
-        # 現在の開催状況と取得した開催情報が同じ
-        if (self.cb_is_open == cb_is_open):
-            if self.cb_remaining_days > cb_remaining_days:
-                await channel.send(
-                    f"クラバト{self.status['cb_days']-cb_remaining_days}日目です！！")
-        # 現在の開催状況と取得した開催情報が異なる（非開催中->開催中 or 開催中->非開催中）
-        elif self.cb_is_open != cb_is_open:
-            # 非開催中->開催中
-            if (self.cb_is_open == False) and (cb_is_open == True):
-                await channel.send("クラバトが開始しました！！")
-            # 開催中->非開催中
-            elif (self.cb_is_open == True) and (cb_is_open == False):
-                await channel.send("クラバトが終了しました！！")
+            self.cb_is_open = cb_is_open
+            self.cb_remaining_days = cb_remaining_days
 
     @commands.command(name='setstatus')
     async def cmd_setstatus(self, ctx):
