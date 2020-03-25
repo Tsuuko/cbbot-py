@@ -5,7 +5,7 @@
 import os
 
 # ローカルデバッグ用
-# heroku以外で実行する場合は.envファイルから環境変数を読み取る
+# heroku以外で実行する場合は.env.developmentファイルから環境変数を読み取る
 if os.environ.get("DYNO") is None:
     from dotenv import load_dotenv
     from os.path import join, dirname
@@ -25,21 +25,24 @@ CLOUDCUBE_URL = os.environ.get("CLOUDCUBE_URL")
 MONGODB_URI = os.environ.get("MONGODB_URI")
 
 # チャンネル設定読み取り
-MEMBER_NOTIFICATION_CHANNEL_ID=int(os.environ.get("MEMBER_NOTIFICATION_CHANNEL_ID"))
+MEMBER_NOTIFICATION_CHANNEL_ID = int(
+    os.environ.get("MEMBER_NOTIFICATION_CHANNEL_ID"))
 
+CB_NOTIFICATION_CHANNEL_ID = int(os.environ.get("CB_NOTIFICATION_CHANNEL_ID"))
 
 # google sheets apiのoauth認証情報読み取り
 # https://qiita.com/a-r-i/items/bb8b8317840e3a87771a
 SHEETS_CREDENTIAL = {
-                "type": "service_account",
-                "project_id": os.environ['SHEET_PROJECT_ID'],
-                "private_key_id": os.environ['SHEET_PRIVATE_KEY_ID'],
-                "private_key": os.environ['SHEET_PRIVATE_KEY'],
-                "client_email": os.environ['SHEET_CLIENT_EMAIL'],
-                "client_id": os.environ['SHEET_CLIENT_ID'],
-                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-                "token_uri": "https://oauth2.googleapis.com/token",
-                "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-                "client_x509_cert_url":  os.environ['SHEET_CLIENT_X509_CERT_URL']
+    "type": "service_account",
+    "project_id": os.environ['SHEET_PROJECT_ID'],
+    "private_key_id": os.environ['SHEET_PRIVATE_KEY_ID'],
+    "private_key": os.environ['SHEET_PRIVATE_KEY'],
+    "client_email": os.environ['SHEET_CLIENT_EMAIL'],
+    "client_id": os.environ['SHEET_CLIENT_ID'],
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url":
+    "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": os.environ['SHEET_CLIENT_X509_CERT_URL']
 }
-SPREADSHEET_URL=os.environ.get("SPREADSHEET_URL")
+SPREADSHEET_URL = os.environ.get("SPREADSHEET_URL")
