@@ -69,19 +69,22 @@ def set_cbstatus(status):
     return cb_is_open:bool,cb_remaining_days:int
 
     cb_is_open:クラバトが開催中の場合はTrueを返す
-    cb_remaining_days:当日を含めない残日数を返す（最終日は0が返される）
+    remaining_days:当日を含めない残日数を返す（最終日は0が返される）
+    now_cbday:現在の日数（開催当日は1）
     """
     # 現在日時
     now_datetime = datetime.now()
     # クラバト何日目か
     now_cbday = (now_datetime - status["cb_start"]).days + 1
+    # 残り何日か（最終日は0が返される）
+    remaining_days=status['cb_days'] - now_cbday
 
     # 1日目以上&開催日数以下の場合（開催中）
     if now_cbday >= 1 and now_cbday <= status["cb_days"]:
-        return True, status['cb_days'] - now_cbday
+        return True, remaining_days, now_cbday
     # それ以外（非開催中）
     else:
-        return False, status['cb_days'] - now_cbday
+        return False, remaining_days, now_cbday
 
 
 class spreadsheet:
@@ -99,7 +102,7 @@ class spreadsheet:
         gc = gspread.authorize(credentials)
         self.sheet = gc.open_by_url(load_settings.SPREADSHEET_URL)
 
-    def _is_registered_user(self, username):
+    def _chk_registered_user(self, username):
         ws = self.sheet.worksheet("main")
         result = ws.range(2, 1, ws.row_count, 1)
         #result=ws.findall(username)
@@ -110,7 +113,7 @@ class spreadsheet:
             return True
 
     def add_user(self, username):
-        if not self._is_registered_user(username):
+        if not self._chk_registered_user(username):
             ws = self.sheet.worksheet("main")
             cell_range = f"B{ws.row_count+1}:L{ws.row_count+1}"
             result = ws.append_row([
@@ -124,7 +127,7 @@ class spreadsheet:
             raise Exception("ユーザーはすでに存在します。")
 
     def delete_user(self, username):
-        if self._is_registered_user(username):
+        if self._chk_registered_user(username):
             ws = self.sheet.worksheet("main")
             result = ws.range(2, 1, ws.row_count, 1)
             user_list = [i for i in result if i.value == username]
@@ -135,7 +138,18 @@ class spreadsheet:
         else:
             raise Exception("ユーザーが存在しません。")
 
+    def set_attack(self,username,count,cbday):
 
+        if self._chk_registered_user(username):
+            ws = self.sheet.worksheet("main")
+            result = ws.range(2, 1, ws.row_count, 1)
+            user_list = [i for i in result if i.value == username]
+            if len(user_list) == 1:
+                print(ws.update_cell(user_list[0].row,cbday+1,["","1凸","2凸","3凸"][count]))
+            else:
+                raise Exception("同名ユーザーが2人以上登録されています。")
+        else:
+            raise Exception("ユーザーが存在しません。")
 if __name__ == "__main__":
     #spreadsheet = spreadsheet()
     #print()

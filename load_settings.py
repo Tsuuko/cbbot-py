@@ -29,6 +29,8 @@ MEMBER_NOTIFICATION_CHANNEL_ID = int(
     os.environ.get("MEMBER_NOTIFICATION_CHANNEL_ID"))
 
 CB_NOTIFICATION_CHANNEL_ID = int(os.environ.get("CB_NOTIFICATION_CHANNEL_ID"))
+BOT_COMMAND_CHANNEL = int(os.environ.get("BOT_COMMAND_CHANNEL"))
+BOT_MANAGER_ROLE = int(os.environ.get("BOT_MANAGER_ROLE"))
 
 # google sheets apiのoauth認証情報読み取り
 # https://qiita.com/a-r-i/items/bb8b8317840e3a87771a

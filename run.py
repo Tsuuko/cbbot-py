@@ -7,6 +7,7 @@ import load_settings
 import s3_manager  # cloudcubeを使用する場合
 import clanbattle_manager
 
+
 # アクセストークン
 TOKEN = load_settings.DISCORD_BOT_TOKEN
 
