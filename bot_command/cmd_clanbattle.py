@@ -1,3 +1,7 @@
+###########################
+# クランバトル関係のコマンド #
+###########################
+
 from discord.ext import commands, tasks
 from datetime import datetime
 import discord
@@ -14,7 +18,7 @@ BOT_MANAGER_ROLE = load_settings.BOT_MANAGER_ROLE
 class clanbattle(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.sheet = clanbattle_manager.spreadsheet()
+        #self.sheet = clanbattle_manager.spreadsheet()
         self.cbstatus = clanbattle_manager.fetch_status()
         self.cb_is_open = False
         self.cb_remaining_days = -1
@@ -25,16 +29,19 @@ class clanbattle(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         if message.channel.id == BOT_COMMAND_CHANNEL:
+
+            # 凸登録用絵文字が押された場合に凸登録＆ロール付け替え
+            # 1凸 :attack1:
+            # 2凸 :attack2:
+            # 3凸 :attack3:
+            # 絵文字での凸登録削除はできない
             if message.content.startswith(
                     "<:attack3:") or message.content.startswith(
                         "<:attack2:") or message.content.startswith(
                             "<:attack1:"):
                 if self.cb_is_open is True:
                     username = message.author.display_name
-
-                    # ロール付け替え
-                    await set_role(self.bot,"凸報告済",message=message)
-                    await unset_role(self.bot,"凸未報告",message=message)
+                    self.sheet = clanbattle_manager.spreadsheet()
 
                     # 3凸報告
                     if message.content.startswith("<:attack3:"):
@@ -71,6 +78,11 @@ class clanbattle(commands.Cog):
                         await send_success_message(self.bot,
                                                    embed,
                                                    message=message)
+
+                    # ロール付け替え
+                    await set_role(self.bot, "凸報告済", message=message)
+                    await unset_role(self.bot, "凸未報告", message=message)
+
                 else:
                     msg = f"""
                         クランバトル開催期間ではありません。
@@ -93,6 +105,9 @@ class clanbattle(commands.Cog):
         - ユーザー指定なし: `{prefix}regist`
         - ユーザー指定: `{prefix}regist -u {username}`
         """
+
+        self.sheet = clanbattle_manager.spreadsheet()
+
         if len(args) == 0:
             try:
                 result = self.sheet.add_user(ctx.author.display_name)
@@ -133,6 +148,9 @@ class clanbattle(commands.Cog):
         - ユーザー指定なし(自分): `{prefix}delete me`
         - ユーザー指定: `{prefix}delete -u {username}`
         """
+
+        self.sheet = clanbattle_manager.spreadsheet()
+
         if len(args) == 1 and args[0] == "me":
             try:
                 self.sheet.delete_user(ctx.author.display_name)
@@ -164,7 +182,18 @@ class clanbattle(commands.Cog):
 
     @commands.command(name='attack')
     async def cmd_attack(self, ctx, *args):
+        """
+        凸登録をする。
+
+        Commands
+        ----------
+        - ユーザー指定なし(自分): `{prefix}attack {凸回数}`
+        - ユーザー指定: `{prefix}attack -u {username} {凸回数}`
+
+        回数=0-3の数字
+        """
         if ctx.message.channel.id == BOT_COMMAND_CHANNEL:
+            self.sheet = clanbattle_manager.spreadsheet()
             try:
                 if self.cb_is_open is True:
                     if len(args) == 1 and args[0].isdecimal():
@@ -176,12 +205,12 @@ class clanbattle(commands.Cog):
                                                   self.now_cbday)
 
                             # ロール付け替え
-                            if attack_count>0:
-                                await set_role(self.bot,"凸報告済",ctx=ctx)
-                                await unset_role(self.bot,"凸未報告",ctx=ctx)
+                            if attack_count > 0:
+                                await set_role(self.bot, "凸報告済", ctx=ctx)
+                                await unset_role(self.bot, "凸未報告", ctx=ctx)
                             else:
-                                await set_role(self.bot,"凸未報告",ctx=ctx)
-                                await unset_role(self.bot,"凸報告済",ctx=ctx)
+                                await set_role(self.bot, "凸未報告", ctx=ctx)
+                                await unset_role(self.bot, "凸報告済", ctx=ctx)
 
                             embed = discord.Embed(
                                 title="✅ 登録完了",
@@ -276,6 +305,55 @@ class clanbattle(commands.Cog):
                         inline=False)
         await ctx.send(embed=embed)
 
+    @commands.command(name='reset_attackrole')
+    async def cmd_reset_attackrole(self, ctx):
+        """
+        全員の凸登録ロールをリセットする。
+
+        Commands
+        ----------
+        - `{prefix}reset_attackrole`
+        """
+        attacked_role = discord.utils.find(lambda r: r.name == "凸報告済",
+                                           ctx.guild.roles)
+        no_attack_role = discord.utils.find(lambda r: r.name == "凸未報告",
+                                            ctx.guild.roles)
+        if attacked_role is None:
+            await ctx.send("`凸報告済`という名前のロールを作成してください。")
+        if no_attack_role is None:
+            await ctx.send("`凸未報告`という名前のロールを作成してください。")
+
+        for member in ctx.guild.members:
+            if not member.bot:
+                await member.add_roles(no_attack_role)
+                await member.remove_roles(attacked_role)
+        await ctx.send("メンバー全員の凸報告済の削除、凸未報告のロール付与が完了しました。")
+
+    @commands.command(name='attacked')
+    async def cmd_set_attackrole(self, ctx):
+        """
+        実行した人に凸報告済みロールをつけて凸未報告ロールを外す。
+
+        Commands
+        ----------
+        - `{prefix}attacked`
+        """
+        member = ctx.guild.get_member(ctx.author.id)
+
+        attacked_role = discord.utils.find(lambda r: r.name == "凸報告済",
+                                           ctx.guild.roles)
+        no_attack_role = discord.utils.find(lambda r: r.name == "凸未報告",
+                                            ctx.guild.roles)
+        if attacked_role is None:
+            await ctx.send("`凸報告済`という名前のロールを作成してください。")
+        if no_attack_role is None:
+            await ctx.send("`凸未報告`という名前のロールを作成してください。")
+
+        await member.add_roles(attacked_role)
+        await member.remove_roles(no_attack_role)
+        await ctx.send(
+            f"{ctx.message.author.mention} 凸未報告の削除、凸報告済のロール付与が完了しました。")
+
     ####################
     # 定期的に実行される #
     ####################
@@ -330,38 +408,3 @@ class clanbattle(commands.Cog):
                 print(
                     f"定期実行: set_cbstatus: self.cb_is_open={self.cb_is_open}, self.cb_remaining_days={self.cb_remaining_days}, now_cbday={self.now_cbday}"
                 )
-
-    @commands.command(name='reset_attackrole')
-    async def cmd_reset_attackrole(self, ctx):
-        attacked_role = discord.utils.find(lambda r: r.name == "凸報告済",
-                                           ctx.guild.roles)
-        no_attack_role = discord.utils.find(lambda r: r.name == "凸未報告",
-                                            ctx.guild.roles)
-        if attacked_role is None:
-            await ctx.send("`凸報告済`という名前のロールを作成してください。")
-        if no_attack_role is None:
-            await ctx.send("`凸未報告`という名前のロールを作成してください。")
-
-        for member in ctx.guild.members:
-            if not member.bot:
-                await member.add_roles(no_attack_role)
-                await member.remove_roles(attacked_role)
-        await ctx.send("メンバー全員の凸報告済の削除、凸未報告のロール付与が完了しました。")
-
-    @commands.command(name='attacked')
-    async def cmd_set_attackrole(self, ctx):
-        member = ctx.guild.get_member(ctx.author.id)
-
-        attacked_role = discord.utils.find(lambda r: r.name == "凸報告済",
-                                           ctx.guild.roles)
-        no_attack_role = discord.utils.find(lambda r: r.name == "凸未報告",
-                                            ctx.guild.roles)
-        if attacked_role is None:
-            await ctx.send("`凸報告済`という名前のロールを作成してください。")
-        if no_attack_role is None:
-            await ctx.send("`凸未報告`という名前のロールを作成してください。")
-
-        await member.add_roles(attacked_role)
-        await member.remove_roles(no_attack_role)
-        await ctx.send(
-            f"{ctx.message.author.mention} 凸未報告の削除、凸報告済のロール付与が完了しました。")

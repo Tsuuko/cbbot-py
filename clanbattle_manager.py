@@ -34,6 +34,10 @@ def fetch_status():
 
 
 def get_cbday():
+    """
+    確認用
+    bot本体では未使用
+    """
     #cb_status=fetch_status()
     cb_status = {
         'cb_start': datetime.strptime('2020/02/23 5:00:00',
@@ -66,6 +70,8 @@ def set_cbstatus(status):
     """
     クランバトル開催情報と日数を設定する。
 
+    return
+    ----
     return cb_is_open:bool,cb_remaining_days:int
 
     cb_is_open:クラバトが開催中の場合はTrueを返す
@@ -77,7 +83,7 @@ def set_cbstatus(status):
     # クラバト何日目か
     now_cbday = (now_datetime - status["cb_start"]).days + 1
     # 残り何日か（最終日は0が返される）
-    remaining_days=status['cb_days'] - now_cbday
+    remaining_days = status['cb_days'] - now_cbday
 
     # 1日目以上&開催日数以下の場合（開催中）
     if now_cbday >= 1 and now_cbday <= status["cb_days"]:
@@ -103,6 +109,14 @@ class spreadsheet:
         self.sheet = gc.open_by_url(load_settings.SPREADSHEET_URL)
 
     def _chk_registered_user(self, username):
+        """
+        ユーザーがスプレッドシートに登録されているか確認する。
+
+        return
+        -----
+        - 登録済み：True
+        - 未登録：False
+        """
         ws = self.sheet.worksheet("main")
         result = ws.range(2, 1, ws.row_count, 1)
         #result=ws.findall(username)
@@ -113,6 +127,9 @@ class spreadsheet:
             return True
 
     def add_user(self, username):
+        """
+        ユーザーをスプレッドシートに登録する。
+        """
         if not self._chk_registered_user(username):
             ws = self.sheet.worksheet("main")
             cell_range = f"B{ws.row_count+1}:L{ws.row_count+1}"
@@ -127,6 +144,9 @@ class spreadsheet:
             raise Exception("ユーザーはすでに存在します。")
 
     def delete_user(self, username):
+        """
+        ユーザーをスプレッドシートから削除する。
+        """
         if self._chk_registered_user(username):
             ws = self.sheet.worksheet("main")
             result = ws.range(2, 1, ws.row_count, 1)
@@ -138,18 +158,24 @@ class spreadsheet:
         else:
             raise Exception("ユーザーが存在しません。")
 
-    def set_attack(self,username,count,cbday):
-
+    def set_attack(self, username, count, cbday):
+        """
+        凸登録する。
+        """
         if self._chk_registered_user(username):
             ws = self.sheet.worksheet("main")
             result = ws.range(2, 1, ws.row_count, 1)
             user_list = [i for i in result if i.value == username]
             if len(user_list) == 1:
-                print(ws.update_cell(user_list[0].row,cbday+1,["","1凸","2凸","3凸"][count]))
+                print(
+                    ws.update_cell(user_list[0].row, cbday + 1,
+                                   ["", "1凸", "2凸", "3凸"][count]))
             else:
                 raise Exception("同名ユーザーが2人以上登録されています。")
         else:
             raise Exception("ユーザーが存在しません。")
+
+
 if __name__ == "__main__":
     #spreadsheet = spreadsheet()
     #print()

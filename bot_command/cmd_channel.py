@@ -1,3 +1,7 @@
+##############################
+# チャンネル管理関係のコマンド #
+##############################
+
 from discord.ext import commands
 #import db_manager
 import s3_manager
