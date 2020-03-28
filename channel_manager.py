@@ -19,7 +19,7 @@ def is_have_botmanager_role(ctx):
 #    return bot.get_channel(message.channel.id)
 
 
-async def send_success_message(bot, embed, ctx=None, message=None):
+async def send_embed_message(bot, embed, ctx=None, message=None, channel=None):
     """
     成功メッセージを送信する。
 
@@ -30,9 +30,14 @@ async def send_success_message(bot, embed, ctx=None, message=None):
             title="✅ 登録完了",
             description="メッセージ内容",
             color=0x00ff00)
+
+    ctx,message,channelのどれかを1つを引数に指定
+
+    channelの場合はauthor(コマンド)表示なし
     """
-    if (ctx is not None) and (message is not None):
-        raise Exception("ctxとmessageが両方指定されています。")
+    if [ctx,message,channel].count(None)<2:
+        print([ctx,message,channel].count(None))
+        raise Exception("パラメータが複数指定されています。")
 
     elif ctx is not None:
         embed.set_footer(text=bot.user.display_name,
@@ -46,27 +51,29 @@ async def send_success_message(bot, embed, ctx=None, message=None):
         embed.set_author(name=message.content)
         await message.channel.send(embed=embed)
 
+    elif channel is not None:
+        embed.set_footer(text=bot.user.display_name,
+                         icon_url=bot.user.avatar_url)
+        await channel.send(embed=embed)
     else:
-        raise Exception("ctxとmessageがどちらも指定されていません。")
+        raise Exception("パラメータが指定されていません。")
 
 
 async def send_error_message(bot, text, ctx=None, message=None):
     if (ctx is not None) and (message is not None):
         raise Exception("ctxとmessageが両方指定されています。")
-    elif ctx is not None:
-        embed = discord.Embed(title="❎ エラー", description=text, color=0xff0000)
-        embed.set_footer(text=bot.user.display_name,
-                         icon_url=bot.user.avatar_url)
-        embed.set_author(name=ctx.message.content)
-        await ctx.send(embed=embed)
-    elif message is not None:
-        embed = discord.Embed(title="❎ エラー", description=text, color=0xff0000)
-        embed.set_footer(text=bot.user.display_name,
-                         icon_url=bot.user.avatar_url)
-        embed.set_author(name=message.content)
-        await message.channel.send(embed=embed)
     else:
-        raise Exception("ctxとmessageがどちらも指定されていません。")
+        embed = discord.Embed(title="⚠ エラー", description=text, color=0xff0000)
+        embed.set_footer(text=bot.user.display_name,
+                         icon_url=bot.user.avatar_url)
+        if ctx is not None:
+            embed.set_author(name=ctx.message.content)
+            await ctx.send(embed=embed)
+        elif message is not None:
+            embed.set_author(name=message.content)
+            await message.channel.send(embed=embed)
+        else:
+            raise Exception("ctxとmessageがどちらも指定されていません。")
 
 
 async def send_botmanager_role_error(bot, ctx=None, message=None):
@@ -138,3 +145,56 @@ async def unset_role(bot, rolename, ctx=None, message=None):
     else:
         raise Exception("ctxとmessageがどちらも指定されていません。")
 
+async def reset_attackrole(ctx):
+    """
+    全員の凸登録ロールをリセットする。
+
+    params
+    ---
+    - ctx:.guildを持つクラス
+    """
+    attacked_role = discord.utils.find(lambda r: r.name == "凸報告済",
+                                       ctx.guild.roles)
+    no_attack_role = discord.utils.find(lambda r: r.name == "凸未報告",
+                                        ctx.guild.roles)
+    msg = ""
+    if (attacked_role is None) or (no_attack_role is None):
+        if attacked_role is None:
+            msg += "`凸報告済`という名前のロールが見つかりません。"
+        if no_attack_role is None:
+            if len(msg) > 0:
+                msg += "\n"
+            msg += "`凸未報告`という名前のロールが見つかりません。"
+        raise Exception(msg)
+    else:
+        for member in ctx.guild.members:
+            if not member.bot:
+                await member.add_roles(no_attack_role)
+                await member.remove_roles(attacked_role)
+
+async def clear_attackrole(ctx):
+    """
+    全員の凸登録ロールを削除する。
+
+    params
+    ---
+    - ctx:.guildを持つクラス
+    """
+    attacked_role = discord.utils.find(lambda r: r.name == "凸報告済",
+                                       ctx.guild.roles)
+    no_attack_role = discord.utils.find(lambda r: r.name == "凸未報告",
+                                        ctx.guild.roles)
+    msg = ""
+    if (attacked_role is None) or (no_attack_role is None):
+        if attacked_role is None:
+            msg += "`凸報告済`という名前のロールが見つかりません。"
+        if no_attack_role is None:
+            if len(msg) > 0:
+                msg += "\n"
+            msg += "`凸未報告`という名前のロールが見つかりません。"
+        raise Exception(msg)
+    else:
+        for member in ctx.guild.members:
+            if not member.bot:
+                await member.remove_roles(no_attack_role)
+                await member.remove_roles(attacked_role)

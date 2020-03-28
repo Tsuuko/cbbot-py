@@ -2,7 +2,11 @@ import requests
 from datetime import datetime
 import load_settings
 import gspread
+import discord
 from oauth2client.service_account import ServiceAccountCredentials
+from pdf2image import convert_from_bytes
+import requests
+from io import BytesIO
 
 
 def fetch_status():
@@ -92,12 +96,31 @@ def set_cbstatus(status):
     else:
         return False, remaining_days, now_cbday
 
+def shot_capture():
+    """
+    スプレッドシート1枚目のキャプチャを取る。
+
+    return
+    ---
+    - BytesIO(png)
+    """
+    r = requests.get(
+        "https://docs.google.com/spreadsheets/d/10fTu0MzvI-eNysZ1FGD-dmpogBsDKb_FKjdPFuxuaEM/export?format=pdf&size=executive&portrait=false&scale=4&top_margin=0.10&bottom_margin=0.00&left_margin=0.10&right_margin=0.00&horizontal_alignment=CENTER&vertical_alignment=MIDDLE"
+    )
+    images = convert_from_bytes(r.content)
+    f = BytesIO()
+    images[0].save(f, "PNG")
+    f.seek(0)
+    return f
+
+
+
 
 class spreadsheet:
-    def __init__(self):
-        self.__authorize()
+    #def __init__(self):
+    #    self._authorize()
 
-    def __authorize(self):
+    def _authorize(self):
         scope = [
             "https://spreadsheets.google.com/feeds",
             "https://www.googleapis.com/auth/drive"
@@ -120,7 +143,7 @@ class spreadsheet:
         ws = self.sheet.worksheet("main")
         result = ws.range(2, 1, ws.row_count, 1)
         #result=ws.findall(username)
-        count = len([1 for i in result if i.value == username])
+        count = len([i.value for i in result if i.value == username])
         if count == 0:
             return False
         else:
@@ -130,15 +153,17 @@ class spreadsheet:
         """
         ユーザーをスプレッドシートに登録する。
         """
+        self._authorize()
         if not self._chk_registered_user(username):
             ws = self.sheet.worksheet("main")
-            cell_range = f"B{ws.row_count+1}:L{ws.row_count+1}"
+            cell_range = f"B{ws.row_count+1}:K{ws.row_count+1}"
             result = ws.append_row([
-                username, '', '', '', '', '', '', '', '', '', '', '',
-                f'=COUNTIF({cell_range},"3凸")+COUNTIF({cell_range},"2凸")+COUNTIF({cell_range},"1凸")',
+                username, '', '', '', '', '', '', '', '', '', '',
+                f'=COUNTIF({cell_range},"3凸")+COUNTIF({cell_range},"2凸")+COUNTIF({cell_range},"1凸")+COUNTIF({cell_range},"報忘")',
                 f'=COUNTIF({cell_range},"報忘")'
             ],
                                    value_input_option='USER_ENTERED')
+            print("add_user", result)
             return result["updates"]["updatedColumns"]
         else:
             raise Exception("ユーザーはすでに存在します。")
@@ -147,12 +172,15 @@ class spreadsheet:
         """
         ユーザーをスプレッドシートから削除する。
         """
+        self._authorize()
         if self._chk_registered_user(username):
             ws = self.sheet.worksheet("main")
             result = ws.range(2, 1, ws.row_count, 1)
             user_list = [i for i in result if i.value == username]
             if len(user_list) == 1:
-                print(ws.delete_row(user_list[0].row))
+                result = ws.delete_row(user_list[0].row)
+                print("delete_user", result)
+
             else:
                 raise Exception("同名ユーザーが2人以上登録されています。")
         else:
@@ -162,23 +190,33 @@ class spreadsheet:
         """
         凸登録する。
         """
+        self._authorize()
         if self._chk_registered_user(username):
             ws = self.sheet.worksheet("main")
             result = ws.range(2, 1, ws.row_count, 1)
             user_list = [i for i in result if i.value == username]
             if len(user_list) == 1:
-                print(
-                    ws.update_cell(user_list[0].row, cbday + 1,
-                                   ["", "1凸", "2凸", "3凸"][count]))
+                result = ws.update_cell(user_list[0].row, cbday + 1,
+                                        ["", "1凸", "2凸", "3凸"][count])
+                print("set_attack", result)
+
             else:
                 raise Exception("同名ユーザーが2人以上登録されています。")
         else:
             raise Exception("ユーザーが存在しません。")
 
+    def clear_all_attack(self):
+        self._authorize()
+        ws = self.sheet.worksheet("main")
+        # 1日目から10日目を削除
+        self.sheet.values_clear(f"{ws.title}!B2:K{ws.row_count}")
+        # メモ欄1を削除
+        self.sheet.values_clear(f"{ws.title}!N2:N{ws.row_count}")
+
+
+
+
 
 if __name__ == "__main__":
-    #spreadsheet = spreadsheet()
-    #print()
-    #get_cbday()
-
-    print(set_cbstatus(fetch_status()))
+    spreadsheet = spreadsheet()
+    spreadsheet.clear_all_attack()

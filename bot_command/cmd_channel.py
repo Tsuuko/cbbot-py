@@ -6,6 +6,7 @@ from discord.ext import commands
 #import db_manager
 import s3_manager
 import load_settings
+import discord
 
 MEMBER_NOTIFICATION_CHANNEL_ID = load_settings.MEMBER_NOTIFICATION_CHANNEL_ID
 
@@ -131,3 +132,6 @@ class channel(commands.Cog):
         - `{prefix}hello`
         """
         await ctx.send(f"{ctx.author.mention} Hello!")
+
+
+

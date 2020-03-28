@@ -6,6 +6,8 @@ import load_settings
 #import db_manager       # mmongoDBを使用する場合
 import s3_manager  # cloudcubeを使用する場合
 import clanbattle_manager
+from channel_manager import send_embed_message,send_error_message
+
 
 
 # アクセストークン
@@ -35,6 +37,12 @@ bot = commands.Bot(command_prefix=prefix)
 async def on_ready():
     # リッチプレセンス（～をプレイ中）を設定
     await bot.change_presence(activity=discord.Game("dev"))
+    for guild in bot.guilds:
+        channel=guild.system_channel
+        embed = discord.Embed(
+            title="ℹ BOTが起動しました",
+            color=0x00ff00)
+        await send_embed_message(bot,embed,channel=channel)
 
     # 起動したらターミナルにログイン通知が表示される
     print('ログインしました')

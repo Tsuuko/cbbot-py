@@ -10,6 +10,7 @@ import load_settings
 import traceback
 from channel_manager import *
 
+
 CB_NOTIFICATION_CHANNEL_ID = load_settings.CB_NOTIFICATION_CHANNEL_ID
 BOT_COMMAND_CHANNEL = load_settings.BOT_COMMAND_CHANNEL
 BOT_MANAGER_ROLE = load_settings.BOT_MANAGER_ROLE
@@ -18,7 +19,7 @@ BOT_MANAGER_ROLE = load_settings.BOT_MANAGER_ROLE
 class clanbattle(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        #self.sheet = clanbattle_manager.spreadsheet()
+        self.sheet = clanbattle_manager.spreadsheet()
         self.cbstatus = clanbattle_manager.fetch_status()
         self.cb_is_open = False
         self.cb_remaining_days = -1
@@ -41,43 +42,60 @@ class clanbattle(commands.Cog):
                             "<:attack1:"):
                 if self.cb_is_open is True:
                     username = message.author.display_name
-                    self.sheet = clanbattle_manager.spreadsheet()
 
                     # 3凸報告
                     if message.content.startswith("<:attack3:"):
-                        self.sheet.set_attack(message.author.display_name, 3,
-                                              self.now_cbday)
-                        embed = discord.Embed(
-                            title="✅ 登録完了",
-                            description=f"[ **{username}** さんを3凸登録しました。 ]",
-                            color=0x00ff00)
-                        await send_success_message(self.bot,
-                                                   embed,
-                                                   message=message)
+                        try:
+                            self.sheet.set_attack(message.author.display_name,
+                                                  3, self.now_cbday)
+                            embed = discord.Embed(
+                                title="✅ 登録完了",
+                                description=f"**{username}** さんを3凸登録しました。",
+                                color=0x00ff00)
+                            await send_embed_message(self.bot,
+                                                       embed,
+                                                       message=message)
+                        except Exception as e:
+                            msg = str(e)
+                            await send_error_message(self.bot,
+                                                     msg,
+                                                     message=message)
 
                     # 2凸報告
                     elif message.content.startswith("<:attack2:"):
-                        self.sheet.set_attack(message.author.display_name, 2,
-                                              self.now_cbday)
-                        embed = discord.Embed(
-                            title="✅ 登録完了",
-                            description=f"[ **{username}** さんを2凸登録しました。 ]",
-                            color=0x00ff00)
-                        await send_success_message(self.bot,
-                                                   embed,
-                                                   message=message)
+                        try:
+                            self.sheet.set_attack(message.author.display_name,
+                                                  2, self.now_cbday)
+                            embed = discord.Embed(
+                                title="✅ 登録完了",
+                                description=f"**{username}** さんを2凸登録しました。",
+                                color=0x00ff00)
+                            await send_embed_message(self.bot,
+                                                       embed,
+                                                       message=message)
+                        except Exception as e:
+                            msg = str(e)
+                            await send_error_message(self.bot,
+                                                     msg,
+                                                     message=message)
 
                     # 1凸報告
                     elif message.content.startswith("<:attack1:"):
-                        self.sheet.set_attack(message.author.display_name, 1,
-                                              self.now_cbday)
-                        embed = discord.Embed(
-                            title="✅ 登録完了",
-                            description=f"[ **{username}** さんを1凸登録しました。 ]",
-                            color=0x00ff00)
-                        await send_success_message(self.bot,
-                                                   embed,
-                                                   message=message)
+                        try:
+                            self.sheet.set_attack(message.author.display_name,
+                                                  1, self.now_cbday)
+                            embed = discord.Embed(
+                                title="✅ 登録完了",
+                                description=f"**{username}** さんを1凸登録しました。",
+                                color=0x00ff00)
+                            await send_embed_message(self.bot,
+                                                       embed,
+                                                       message=message)
+                        except Exception as e:
+                            msg = str(e)
+                            await send_error_message(self.bot,
+                                                     msg,
+                                                     message=message)
 
                     # ロール付け替え
                     await set_role(self.bot, "凸報告済", message=message)
@@ -106,29 +124,26 @@ class clanbattle(commands.Cog):
         - ユーザー指定: `{prefix}regist -u {username}`
         """
 
-        self.sheet = clanbattle_manager.spreadsheet()
-
         if len(args) == 0:
             try:
-                result = self.sheet.add_user(ctx.author.display_name)
+                self.sheet.add_user(ctx.author.display_name)
                 embed = discord.Embed(
                     title="✅ 登録完了",
-                    description=
-                    f"[ **{ctx.author.display_name}** さんを{result}行目に登録しました。 ]",
+                    description=f"**{ctx.author.display_name}** さんを登録しました。",
                     color=0x00ff00)
-                await send_success_message(self.bot, embed, ctx=ctx)
+                await send_embed_message(self.bot, embed, ctx=ctx)
             except Exception as e:
                 msg = str(e)
                 await send_error_message(self.bot, msg, ctx=ctx)
 
         elif len(args) == 2 and args[0] == "-u":
             try:
-                result = self.sheet.add_user(args[1])
+                self.sheet.add_user(args[1])
                 embed = discord.Embed(
                     title="✅ 登録完了",
-                    description=f"[ **{args[1]}** さんを{result}行目に登録しました。 ]",
+                    description=f"**{args[1]}** さんを登録しました。",
                     color=0x00ff00)
-                await send_success_message(self.bot, embed, ctx=ctx)
+                await send_embed_message(self.bot, embed, ctx=ctx)
 
             except Exception as e:
                 msg = str(e)
@@ -149,16 +164,14 @@ class clanbattle(commands.Cog):
         - ユーザー指定: `{prefix}delete -u {username}`
         """
 
-        self.sheet = clanbattle_manager.spreadsheet()
-
         if len(args) == 1 and args[0] == "me":
             try:
                 self.sheet.delete_user(ctx.author.display_name)
                 embed = discord.Embed(
                     title="✅ 削除完了",
-                    description=f"[ **{ctx.author.display_name}** さんを削除しました。 ]",
+                    description=f"**{ctx.author.display_name}** さんを削除しました。",
                     color=0x00ff00)
-                await send_success_message(self.bot, embed, ctx=ctx)
+                await send_embed_message(self.bot, embed, ctx=ctx)
             except Exception as e:
                 msg = str(e)
                 await send_error_message(self.bot, msg, ctx=ctx)
@@ -168,9 +181,9 @@ class clanbattle(commands.Cog):
                 self.sheet.delete_user(args[1])
                 embed = discord.Embed(
                     title="✅ 削除完了",
-                    description=f"[ **{args[1]}** さんを削除しました。 ]",
+                    description=f"**{args[1]}** さんを削除しました。",
                     color=0x00ff00)
-                await send_success_message(self.bot, embed, ctx=ctx)
+                await send_embed_message(self.bot, embed, ctx=ctx)
 
             except Exception as e:
                 msg = str(e)
@@ -193,7 +206,6 @@ class clanbattle(commands.Cog):
         回数=0-3の数字
         """
         if ctx.message.channel.id == BOT_COMMAND_CHANNEL:
-            self.sheet = clanbattle_manager.spreadsheet()
             try:
                 if self.cb_is_open is True:
                     if len(args) == 1 and args[0].isdecimal():
@@ -201,8 +213,14 @@ class clanbattle(commands.Cog):
                         attack_count = int(args[0])
                         text = ["0凸", "1凸", "2凸", "3凸"]
                         if (attack_count <= 3) and (attack_count >= 0):
-                            self.sheet.set_attack(username, attack_count,
-                                                  self.now_cbday)
+                            try:
+                                self.sheet.set_attack(username, attack_count,
+                                                      self.now_cbday)
+                            except Exception as e:
+                                msg = str(e)
+                                await send_error_message(self.bot,
+                                                         msg,
+                                                         ctx=ctx)
 
                             # ロール付け替え
                             if attack_count > 0:
@@ -215,9 +233,9 @@ class clanbattle(commands.Cog):
                             embed = discord.Embed(
                                 title="✅ 登録完了",
                                 description=
-                                f"[ **{username}** さんを{text[attack_count]}登録しました。 ]",
+                                f"**{username}** さんを{text[attack_count]}登録しました。",
                                 color=0x00ff00)
-                            await send_success_message(self.bot,
+                            await send_embed_message(self.bot,
                                                        embed,
                                                        ctx=ctx)
                         else:
@@ -241,9 +259,9 @@ class clanbattle(commands.Cog):
                                     embed = discord.Embed(
                                         title="✅ 登録完了",
                                         description=
-                                        f"[ **{username}** さんを{text[attack_count]}登録しました。 ]",
+                                        f"**{username}** さんを{text[attack_count]}登録しました。",
                                         color=0x00ff00)
-                                    await send_success_message(self.bot,
+                                    await send_embed_message(self.bot,
                                                                embed,
                                                                ctx=ctx)
 
@@ -291,16 +309,16 @@ class clanbattle(commands.Cog):
         - `{prefix}status`
         """
         self.cbstatus = clanbattle_manager.fetch_status()
-        embed = discord.Embed(title="⚔クランバトル開催情報⚔", color=0x00ffff)
+        embed = discord.Embed(title="⚔ クランバトル開催情報 ⚔", color=0x00ffff)
         embed.add_field(
-            name="🕔開始日時",
+            name="🕔 開始日時",
             value=self.cbstatus["cb_start"].strftime('%Y/%m/%d %H:%M'),
             inline=False)
         embed.add_field(
-            name="🕛終了日時",
+            name="🕛 終了日時",
             value=self.cbstatus["cb_end"].strftime('%Y/%m/%d %H:%M'),
             inline=False)
-        embed.add_field(name="🗓開催期間",
+        embed.add_field(name="🗓 開催期間",
                         value=f"{self.cbstatus['cb_days']} 日間",
                         inline=False)
         await ctx.send(embed=embed)
@@ -314,45 +332,77 @@ class clanbattle(commands.Cog):
         ----------
         - `{prefix}reset_attackrole`
         """
-        attacked_role = discord.utils.find(lambda r: r.name == "凸報告済",
-                                           ctx.guild.roles)
-        no_attack_role = discord.utils.find(lambda r: r.name == "凸未報告",
-                                            ctx.guild.roles)
-        if attacked_role is None:
-            await ctx.send("`凸報告済`という名前のロールを作成してください。")
-        if no_attack_role is None:
-            await ctx.send("`凸未報告`という名前のロールを作成してください。")
+        try:
+            await reset_attackrole(ctx)
+            embed = discord.Embed(
+                title="✅ 実行完了",
+                description="全員の凸登録ロールをリセットしました。",
+                color=0x00ff00)
+            await send_embed_message(self.bot, embed, ctx=ctx)
+        except Exception as e:
+            await send_error_message(self.bot,str(e),ctx=ctx)
 
-        for member in ctx.guild.members:
-            if not member.bot:
-                await member.add_roles(no_attack_role)
-                await member.remove_roles(attacked_role)
-        await ctx.send("メンバー全員の凸報告済の削除、凸未報告のロール付与が完了しました。")
 
-    @commands.command(name='attacked')
-    async def cmd_set_attackrole(self, ctx):
+
+    #@commands.command(name='attacked')
+    #async def cmd_set_attackrole(self, ctx):
+    #    """
+    #    実行した人に凸報告済みロールをつけて凸未報告ロールを外す。
+    #
+    #    Commands
+    #    ----------
+    #    - `{prefix}attacked`
+    #    """
+    #    member = ctx.guild.get_member(ctx.author.id)
+    #
+    #    attacked_role = discord.utils.find(lambda r: r.name == "凸報告済",
+    #                                       ctx.guild.roles)
+    #    no_attack_role = discord.utils.find(lambda r: r.name == "凸未報告",
+    #                                        ctx.guild.roles)
+    #    if attacked_role is None:
+    #        await ctx.send("`凸報告済`という名前のロールを作成してください。")
+    #    if no_attack_role is None:
+    #        await ctx.send("`凸未報告`という名前のロールを作成してください。")
+    #
+    #    await member.add_roles(attacked_role)
+    #    await member.remove_roles(no_attack_role)
+    #    await ctx.send(
+    #        f"{ctx.message.author.mention} 凸未報告の削除、凸報告済のロール付与が完了しました。")
+
+    @commands.command(name='clear_sheet')
+    async def clear_sheet(self, ctx):
         """
-        実行した人に凸報告済みロールをつけて凸未報告ロールを外す。
+        凸管理シートをクリアする。
 
         Commands
         ----------
-        - `{prefix}attacked`
+        - `{prefix}clear_sheet`
         """
-        member = ctx.guild.get_member(ctx.author.id)
+        try:
+            f=self.sheet.clear_all_attack()
+            embed = discord.Embed(
+                title="✅ 実行完了",
+                description="凸管理シートをクリアしました。",
+                color=0x00ff00)
+            await send_embed_message(self.bot,embed,ctx=ctx)
 
-        attacked_role = discord.utils.find(lambda r: r.name == "凸報告済",
-                                           ctx.guild.roles)
-        no_attack_role = discord.utils.find(lambda r: r.name == "凸未報告",
-                                            ctx.guild.roles)
-        if attacked_role is None:
-            await ctx.send("`凸報告済`という名前のロールを作成してください。")
-        if no_attack_role is None:
-            await ctx.send("`凸未報告`という名前のロールを作成してください。")
+        except Exception as e:
+            send_error_message(self.bot,str(e),ctx=ctx)
 
-        await member.add_roles(attacked_role)
-        await member.remove_roles(no_attack_role)
-        await ctx.send(
-            f"{ctx.message.author.mention} 凸未報告の削除、凸報告済のロール付与が完了しました。")
+
+    @commands.command(name='capture')
+    async def capture(self, ctx):
+        """
+        スプレッドシートキャプチャ画像送信
+        PDFでダウンロードして画像に変換し、送信する。
+
+        Commands
+        ----------
+        - `{prefix}capture`
+        """
+        f=clanbattle_manager.shot_capture()
+        await ctx.send(file=discord.File(f, filename="capture.png"))
+
 
     ####################
     # 定期的に実行される #
@@ -376,35 +426,136 @@ class clanbattle(commands.Cog):
         else:
             cb_is_open, cb_remaining_days, now_cbday = clanbattle_manager.set_cbstatus(
                 self.status)
+            # メッセージセクション
+            msg_list=list()
+            #infoメッセージセクション
+            info_msg_list=list()
+            #errorメッセージセクション
+            error_msg_list=list()
+
+            # embed
+            embed=None
+
             # 現在の開催状況と取得した開催情報が同じ
             if (self.cb_is_open == cb_is_open):
+                # 日付が進んだ場合
                 if self.cb_remaining_days > cb_remaining_days:
                     self.cb_is_open = cb_is_open
                     self.cb_remaining_days = cb_remaining_days
                     self.now_cbday = now_cbday
                     channel = self.bot.get_channel(CB_NOTIFICATION_CHANNEL_ID)
-                    await channel.send(
-                        f"クラバト{self.status['cb_days']-cb_remaining_days}日目です！！"
-                    )
+
+                    # 開始メッセージのembed作成
+                    embed = discord.Embed(
+                        title="🗓 日付が変わりました 🗓",
+                        color=0x00ff00)
+
+                    # メッセージ追加
+                    msg_list.append(f"""
+                    クランバトル{self.status['cb_days']-cb_remaining_days}日目です！
+                    今日も頑張りましょう💪
+                    """)
+
+                    # ロールを付け替えInfoを追加
+                    try:
+                        await reset_attackrole(channel)
+                        info_msg_list.append("メンバー全員の凸報告ロールをリセットしました。")
+
+                    # ロール付け替えに失敗した場合はエラー文を追加
+                    except Exception as e:
+                        error_msg_list.append(str(e))
+
                     print(
                         f"定期実行: set_cbstatus: self.cb_is_open={self.cb_is_open}, self.cb_remaining_days={self.cb_remaining_days}, now_cbday={self.now_cbday}"
                     )
+                # ステータス変更なし
+                else:
+                    pass
+
             # 現在の開催状況と取得した開催情報が異なる（非開催中->開催中 or 開催中->非開催中）
             elif self.cb_is_open != cb_is_open:
+
                 # 非開催中->開催中
                 if (self.cb_is_open == False) and (cb_is_open == True):
                     self.cb_is_open = cb_is_open
                     self.cb_remaining_days = cb_remaining_days
                     self.now_cbday = now_cbday
+
                     channel = self.bot.get_channel(CB_NOTIFICATION_CHANNEL_ID)
-                    await channel.send("クラバトが開始しました！！")
+                    # 開始メッセージのembed作成
+                    embed = discord.Embed(
+                        title="🎉 クランバトルが開始しました 🎉",
+                        color=0x00ff00)
+
+                    # メッセージ追加
+                    msg_list.append("""
+                    みなさん頑張りましょう💪
+                    """)
+
+                    # ロールを付け替えInfoを追加
+                    try:
+                        await reset_attackrole(channel)
+                        info_msg_list.append("メンバー全員の凸報告ロールをリセットしました。")
+
+                    # ロール付け替えに失敗した場合はエラー文を追加
+                    except Exception as e:
+                        error_msg_list.append(str(e))
+
+
                 # 開催中->非開催中
                 elif (self.cb_is_open == True) and (cb_is_open == False):
                     self.cb_is_open = cb_is_open
                     self.cb_remaining_days = cb_remaining_days
                     self.now_cbday = now_cbday
                     channel = self.bot.get_channel(CB_NOTIFICATION_CHANNEL_ID)
-                    await channel.send("クラバトが終了しました！！")
+
+                    # 終了メッセージのembed作成
+                    embed = discord.Embed(
+                        title="🎉 クランバトルが終了しました 🎉",
+                        color=0x00ff00)
+
+                    # メッセージ追加
+                    msg_list.append("""
+                    みなさんお疲れ様でした🍵
+                    """)
+
+                    # ロールを削除しInfoを追加
+                    try:
+                        await clear_attackrole(channel)
+                        info_msg_list.append("メンバー全員の凸報告ロールをリセットしました。")
+
+                    # ロール付け替えに失敗した場合はエラー文を追加
+                    except Exception as e:
+                        error_msg_list.append(str(e))
+
+
+
+                    # 凸管理シートリセット
+                    try:
+                        self.sheet.clear_all_attack()
+                        info_msg_list.append("凸管理シートをリセットしました。")
+                    # リセットに失敗した場合はエラー文を追加
+                    except Exception as e:
+                        error_msg_list.append(str(e))
+
                 print(
                     f"定期実行: set_cbstatus: self.cb_is_open={self.cb_is_open}, self.cb_remaining_days={self.cb_remaining_days}, now_cbday={self.now_cbday}"
                 )
+
+            # embedを設定してある場合は送信
+            if embed is not None:
+
+                # 各セクションセット
+                if len(msg_list)>0:
+                    embed.add_field(name="📝 メッセージ",value="\n".join(msg_list),inline=False)
+                if len(info_msg_list)>0:
+                    embed.add_field(name="ℹ Info",value="\n".join(info_msg_list),inline=False)
+                if len(error_msg_list)>0:
+                    embed.add_field(name="⚠ Error",value="\n".join(error_msg_list),inline=False)
+
+
+                await send_embed_message(self.bot,embed,channel=channel)
+                ## embedにフッターをつけて送信
+                #embed.set_footer(text=self.bot.user.display_name,
+                #                 icon_url=self.bot.user.avatar_url)
+                #await channel.send(embed=embed)
