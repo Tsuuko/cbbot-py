@@ -16,6 +16,7 @@ boto3 = "*"
 gspread = "*"
 oauth2client = "*"
 pdf2image = "*"
+poppler = "*"
 
 [requires]
 python_version = "3.8"
