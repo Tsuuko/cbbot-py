@@ -12,11 +12,16 @@ from io import BytesIO
 def fetch_status():
     """
     解析サイト<https://redive.estertion.win> からクラバト情報を取ってくる
-    return {
+
+    return
+    ----
+    ```
+    {
         "cb_start": datetime,
         "cb_end": datetime,
         "cb_days": int
     }
+    ```
     """
     # クラバト開催情報取得
     r = requests.get(
@@ -39,8 +44,14 @@ def fetch_status():
 
 def get_cbday():
     """
-    確認用
+    クラバト日時確認用
     bot本体では未使用
+
+    return
+    ----
+    ```
+    None
+    ```
     """
     #cb_status=fetch_status()
     cb_status = {
@@ -74,13 +85,20 @@ def set_cbstatus(status):
     """
     クランバトル開催情報と日数を設定する。
 
+    params
+    ----
+    fetch_status()の結果を引数に指定する。
+    ```
+    {"cb_start": datetime,"cb_end": datetime,"cb_days": int}
+    ```
+
     return
     ----
-    return cb_is_open:bool,cb_remaining_days:int
-
-    cb_is_open:クラバトが開催中の場合はTrueを返す
-    remaining_days:当日を含めない残日数を返す（最終日は0が返される）
-    now_cbday:現在の日数（開催当日は1）
+    ```
+    cb_is_open:bool, # クラバトが開催中の場合はTrueを返す
+    cb_remaining_days:int, # 当日を含めない残日数を返す（最終日は0が返される）
+    now_cbday:int # 現在の日数（開催当日は1）
+    ```
     """
     # 現在日時
     now_datetime = datetime.now()
@@ -102,7 +120,9 @@ def shot_capture():
 
     return
     ---
-    - BytesIO(png)
+    ```
+    f:io.BytesIO # pngファイル
+    ```
     """
     r = requests.get(
         "https://docs.google.com/spreadsheets/d/10fTu0MzvI-eNysZ1FGD-dmpogBsDKb_FKjdPFuxuaEM/export?format=pdf&size=executive&portrait=false&scale=4&top_margin=0.10&bottom_margin=0.00&left_margin=0.10&right_margin=0.00&horizontal_alignment=CENTER&vertical_alignment=MIDDLE"
@@ -113,14 +133,27 @@ def shot_capture():
     f.seek(0)
     return f
 
-
-
-
 class spreadsheet:
     #def __init__(self):
     #    self._authorize()
 
     def _authorize(self):
+        """
+        spreadsheetにログインする。
+        1時間位経つと期限が切れる。
+
+        return
+        ----
+        ```
+        None
+        ```
+
+        set
+        ----
+        ```
+        self.sheet:Spreadsheet #スプレッドシートクラス
+        ```
+        """
         scope = [
             "https://spreadsheets.google.com/feeds",
             "https://www.googleapis.com/auth/drive"
@@ -135,6 +168,11 @@ class spreadsheet:
         """
         ユーザーがスプレッドシートに登録されているか確認する。
 
+        params
+        ----
+        ```
+        username:str # 確認するユーザー名
+        ```
         return
         -----
         - 登録済み：True
@@ -152,6 +190,17 @@ class spreadsheet:
     def add_user(self, username):
         """
         ユーザーをスプレッドシートに登録する。
+
+        params
+        ----
+        ```
+        username:str # 登録するユーザー名
+        ```
+        return
+        ----
+        ```
+        result["updates"]["updatedColumns"]:int # よくわかりません。つかってない。
+        ```
         """
         self._authorize()
         if not self._chk_registered_user(username):
@@ -171,6 +220,18 @@ class spreadsheet:
     def delete_user(self, username):
         """
         ユーザーをスプレッドシートから削除する。
+
+        params
+        ----
+        ```
+        username:str # 削除するユーザー名
+
+        ```
+        return
+        ----
+        ```
+        None
+        ```
         """
         self._authorize()
         if self._chk_registered_user(username):
@@ -189,6 +250,20 @@ class spreadsheet:
     def set_attack(self, username, count, cbday):
         """
         凸登録する。
+
+        params
+        ----
+        ```
+        username:str # 登録するユーザー名
+        count:int # 凸回数
+        cbday:int # クラバト何日目か
+        ```
+
+        return
+        ----
+        ```
+        None
+        ```
         """
         self._authorize()
         if self._chk_registered_user(username):
@@ -206,6 +281,15 @@ class spreadsheet:
             raise Exception("ユーザーが存在しません。")
 
     def clear_all_attack(self):
+        """
+        スプレッドシートの凸欄とメモ欄1を削除
+
+        return
+        ----
+        ```
+        None
+        ```
+        """
         self._authorize()
         ws = self.sheet.worksheet("main")
         # 1日目から10日目を削除

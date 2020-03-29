@@ -5,10 +5,10 @@
 from discord.ext import commands, tasks
 from datetime import datetime
 import discord
-import clanbattle_manager
+from manager import clanbattle_manager
 import load_settings
 import traceback
-from channel_manager import *
+from manager.channel_manager import *
 
 
 CB_NOTIFICATION_CHANNEL_ID = load_settings.CB_NOTIFICATION_CHANNEL_ID
@@ -54,6 +54,7 @@ class clanbattle(commands.Cog):
                                 color=0x00ff00)
                             await send_embed_message(self.bot,
                                                        embed,
+                                                       plain_text=message.author.mention,
                                                        message=message)
                         except Exception as e:
                             msg = str(e)
@@ -72,6 +73,7 @@ class clanbattle(commands.Cog):
                                 color=0x00ff00)
                             await send_embed_message(self.bot,
                                                        embed,
+                                                       plain_text=message.author.mention,
                                                        message=message)
                         except Exception as e:
                             msg = str(e)
@@ -90,11 +92,13 @@ class clanbattle(commands.Cog):
                                 color=0x00ff00)
                             await send_embed_message(self.bot,
                                                        embed,
+                                                       plain_text=message.author.mention,
                                                        message=message)
                         except Exception as e:
                             msg = str(e)
                             await send_error_message(self.bot,
                                                      msg,
+                                                     plain_text=message.author.mention,
                                                      message=message)
 
                     # ロール付け替え
@@ -117,6 +121,7 @@ class clanbattle(commands.Cog):
     async def cmd_regist(self, ctx, *args):
         """
         スプレッドシートにユーザーを登録する。
+        ★ユーザー指定はBOT_MANAGER_ROLE限定
 
         Commands
         ----------
@@ -131,32 +136,37 @@ class clanbattle(commands.Cog):
                     title="✅ 登録完了",
                     description=f"**{ctx.author.display_name}** さんを登録しました。",
                     color=0x00ff00)
-                await send_embed_message(self.bot, embed, ctx=ctx)
+                await send_embed_message(self.bot, embed,plain_text=ctx.author.mention, ctx=ctx)
             except Exception as e:
                 msg = str(e)
                 await send_error_message(self.bot, msg, ctx=ctx)
 
         elif len(args) == 2 and args[0] == "-u":
-            try:
-                self.sheet.add_user(args[1])
-                embed = discord.Embed(
-                    title="✅ 登録完了",
-                    description=f"**{args[1]}** さんを登録しました。",
-                    color=0x00ff00)
-                await send_embed_message(self.bot, embed, ctx=ctx)
+            # BOT_MANAGER_ROLEチェック
+            if is_have_botmanager_role(ctx.author):
+                try:
+                    self.sheet.add_user(args[1])
+                    embed = discord.Embed(
+                        title="✅ 登録完了",
+                        description=f"**{args[1]}** さんを登録しました。",
+                        color=0x00ff00)
+                    await send_embed_message(self.bot, embed,plain_text=ctx.author.mention, ctx=ctx)
 
-            except Exception as e:
-                msg = str(e)
-                await send_error_message(self.bot, msg, ctx=ctx)
-
+                except Exception as e:
+                    msg = str(e)
+                    await send_error_message(self.bot, msg,plain_text=ctx.author.mention, ctx=ctx)
+            # BOT_MANAGER_ROLEを持っていない場合
+            else:
+                await send_botmanager_role_error(self.bot,plain_text=ctx.author.mention,ctx=ctx)
         else:
             msg = "コマンドの引数が正しくありません。"
-            await send_error_message(self.bot, msg, ctx=ctx)
+            await send_error_message(self.bot, msg,plain_text=ctx.author.mention, ctx=ctx)
 
     @commands.command(name='delete')
     async def cmd_delete(self, ctx, *args):
         """
         スプレッドシートからユーザーを削除する。
+        ★ユーザー指定はBOT_MANAGER_ROLE限定
 
         Commands
         ----------
@@ -171,27 +181,32 @@ class clanbattle(commands.Cog):
                     title="✅ 削除完了",
                     description=f"**{ctx.author.display_name}** さんを削除しました。",
                     color=0x00ff00)
-                await send_embed_message(self.bot, embed, ctx=ctx)
+                await send_embed_message(self.bot, embed,plain_text=ctx.author.mention, ctx=ctx)
             except Exception as e:
                 msg = str(e)
-                await send_error_message(self.bot, msg, ctx=ctx)
+                await send_error_message(self.bot, msg,plain_text=ctx.author.mention, ctx=ctx)
 
         elif len(args) == 2 and args[0] == "-u":
-            try:
-                self.sheet.delete_user(args[1])
-                embed = discord.Embed(
-                    title="✅ 削除完了",
-                    description=f"**{args[1]}** さんを削除しました。",
-                    color=0x00ff00)
-                await send_embed_message(self.bot, embed, ctx=ctx)
+            # BOT_MANAGER_ROLEチェック
+            if is_have_botmanager_role(ctx.author):
+                try:
+                    self.sheet.delete_user(args[1])
+                    embed = discord.Embed(
+                        title="✅ 削除完了",
+                        description=f"**{args[1]}** さんを削除しました。",
+                        color=0x00ff00)
+                    await send_embed_message(self.bot, embed,plain_text=ctx.author.mention, ctx=ctx)
 
-            except Exception as e:
-                msg = str(e)
-                await send_error_message(self.bot, msg, ctx=ctx)
+                except Exception as e:
+                    msg = str(e)
+                    await send_error_message(self.bot, msg,plain_text=ctx.author.mention, ctx=ctx)
+            # BOT_MANAGER_ROLEを持っていない場合
+            else:
+                await send_botmanager_role_error(self.bot,plain_text=ctx.author.mention,ctx=ctx)
 
         else:
             msg = "コマンドの引数が正しくありません。"
-            await send_error_message(self.bot, msg, ctx=ctx)
+            await send_error_message(self.bot, msg,plain_text=ctx.author.mention, ctx=ctx)
 
     @commands.command(name='attack')
     async def cmd_attack(self, ctx, *args):
@@ -219,7 +234,7 @@ class clanbattle(commands.Cog):
                             except Exception as e:
                                 msg = str(e)
                                 await send_error_message(self.bot,
-                                                         msg,
+                                                         msg,plain_text=ctx.author.mention,
                                                          ctx=ctx)
 
                             # ロール付け替え
@@ -236,7 +251,7 @@ class clanbattle(commands.Cog):
                                 f"**{username}** さんを{text[attack_count]}登録しました。",
                                 color=0x00ff00)
                             await send_embed_message(self.bot,
-                                                       embed,
+                                                       embed,plain_text=ctx.author.mention,
                                                        ctx=ctx)
                         else:
                             msg = """
@@ -244,10 +259,11 @@ class clanbattle(commands.Cog):
                                 0以上3以下で入力してください。
                                 （0を入力で凸登録をキャンセルします。）
                                 """
-                            await send_error_message(self.bot, msg, ctx=ctx)
+                            await send_error_message(self.bot, msg,plain_text=ctx.author.mention, ctx=ctx)
 
                     elif len(args) == 3:
-                        if is_have_botmanager_role(ctx):
+                        # BOT_MANAGER_ROLEチェック
+                        if is_have_botmanager_role(ctx.author):
                             if args[0] == "-u" and args[2].isdecimal():
                                 username = args[1]
                                 attack_count = int(args[2])
@@ -262,7 +278,7 @@ class clanbattle(commands.Cog):
                                         f"**{username}** さんを{text[attack_count]}登録しました。",
                                         color=0x00ff00)
                                     await send_embed_message(self.bot,
-                                                               embed,
+                                                               embed,plain_text=ctx.author.mention,
                                                                ctx=ctx)
 
                                 else:
@@ -272,7 +288,7 @@ class clanbattle(commands.Cog):
                                         （0を入力で凸登録をキャンセルします。）
                                         """
                                     await send_error_message(self.bot,
-                                                             msg,
+                                                             msg,plain_text=ctx.author.mention,
                                                              ctx=ctx)
 
                             else:
@@ -283,21 +299,30 @@ class clanbattle(commands.Cog):
                                     　※ニックネームは正確に入力する必要があります。
                                     """
                                 await send_error_message(self.bot,
-                                                         msg,
+                                                         msg,plain_text=ctx.author.mention,
                                                          ctx=ctx)
-
+                        # BOT_MANAGER_ROLEを持っていない場合
                         else:
-                            await send_botmanager_role_error(self.bot, ctx=ctx)
+                            await send_botmanager_role_error(self.bot,plain_text=ctx.author.mention, ctx=ctx)
+                    else:
+                        msg = f"""
+                            コマンドの引数が正しくありません。
+                            ・自分の凸登録:`{self.bot.command_prefix}attack 回数`
+                            ・他人の凸登録:`{self.bot.command_prefix}attack -u ニックネーム 回数`
+                            　※ニックネームは正確に入力する必要があります。
+                            """
+                        await send_error_message(self.bot, msg,plain_text=ctx.author.mention, ctx=ctx)
+
 
                 else:
                     msg = f"""
                         クランバトル開催期間ではありません。
                         開催期間は`{self.bot.command_prefix}status`で確認できます。
                         """
-                    await send_error_message(self.bot, msg, ctx=ctx)
+                    await send_error_message(self.bot, msg,plain_text=ctx.author.mention, ctx=ctx)
             except:
                 msg = traceback.format_exc()
-                await send_error_message(self.bot, msg, ctx=ctx)
+                await send_error_message(self.bot, msg,plain_text=ctx.author.mention, ctx=ctx)
 
     @commands.command(name='status')
     async def cmd_getstatus(self, ctx):
@@ -332,15 +357,20 @@ class clanbattle(commands.Cog):
         ----------
         - `{prefix}reset_attackrole`
         """
-        try:
-            await reset_attackrole(ctx)
-            embed = discord.Embed(
-                title="✅ 実行完了",
-                description="全員の凸登録ロールをリセットしました。",
-                color=0x00ff00)
-            await send_embed_message(self.bot, embed, ctx=ctx)
-        except Exception as e:
-            await send_error_message(self.bot,str(e),ctx=ctx)
+        # BOT_MANAGER_ROLEチェック
+        if is_have_botmanager_role(ctx.author):
+            try:
+                await reset_attackrole(ctx.guild)
+                embed = discord.Embed(
+                    title="✅ 実行完了",
+                    description="全員の凸登録ロールをリセットしました。",
+                    color=0x00ff00)
+                await send_embed_message(self.bot, embed,plain_text=ctx.author.mention, ctx=ctx)
+            except Exception as e:
+                await send_error_message(self.bot,str(e),plain_text=ctx.author.mention,ctx=ctx)
+        # BOT_MANAGER_ROLEを持っていない場合
+        else:
+            send_botmanager_role_error(self.bot,plain_text=ctx.author.mention,ctx=ctx)
 
 
 
@@ -378,16 +408,21 @@ class clanbattle(commands.Cog):
         ----------
         - `{prefix}clear_sheet`
         """
-        try:
-            f=self.sheet.clear_all_attack()
-            embed = discord.Embed(
-                title="✅ 実行完了",
-                description="凸管理シートをクリアしました。",
-                color=0x00ff00)
-            await send_embed_message(self.bot,embed,ctx=ctx)
+        # BOT_MANAGER_ROLEチェック
+        if is_have_botmanager_role(ctx.author):
+            try:
+                f=self.sheet.clear_all_attack()
+                embed = discord.Embed(
+                    title="✅ 実行完了",
+                    description="凸管理シートをクリアしました。",
+                    color=0x00ff00)
+                await send_embed_message(self.bot,embed,plain_text=ctx.author.mention,ctx=ctx)
 
-        except Exception as e:
-            send_error_message(self.bot,str(e),ctx=ctx)
+            except Exception as e:
+                send_error_message(self.bot,str(e),plain_text=ctx.author.mention,ctx=ctx)
+        # BOT_MANAGER_ROLEを持っていない場合
+        else:
+            send_botmanager_role_error(self.bot,plain_text=ctx.author.mention,ctx=ctx)
 
 
     @commands.command(name='capture')
@@ -458,7 +493,7 @@ class clanbattle(commands.Cog):
 
                     # ロールを付け替えInfoを追加
                     try:
-                        await reset_attackrole(channel)
+                        await reset_attackrole(channel.guild)
                         info_msg_list.append("メンバー全員の凸報告ロールをリセットしました。")
 
                     # ロール付け替えに失敗した場合はエラー文を追加
@@ -494,7 +529,7 @@ class clanbattle(commands.Cog):
 
                     # ロールを付け替えInfoを追加
                     try:
-                        await reset_attackrole(channel)
+                        await reset_attackrole(channel.guild)
                         info_msg_list.append("メンバー全員の凸報告ロールをリセットしました。")
 
                     # ロール付け替えに失敗した場合はエラー文を追加
@@ -521,7 +556,7 @@ class clanbattle(commands.Cog):
 
                     # ロールを削除しInfoを追加
                     try:
-                        await clear_attackrole(channel)
+                        await clear_attackrole(channel.guild)
                         info_msg_list.append("メンバー全員の凸報告ロールをリセットしました。")
 
                     # ロール付け替えに失敗した場合はエラー文を追加
@@ -553,9 +588,4 @@ class clanbattle(commands.Cog):
                 if len(error_msg_list)>0:
                     embed.add_field(name="⚠ Error",value="\n".join(error_msg_list),inline=False)
 
-
                 await send_embed_message(self.bot,embed,channel=channel)
-                ## embedにフッターをつけて送信
-                #embed.set_footer(text=self.bot.user.display_name,
-                #                 icon_url=self.bot.user.avatar_url)
-                #await channel.send(embed=embed)

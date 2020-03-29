@@ -4,9 +4,9 @@ import requests
 from bot_command import *
 import load_settings
 #import db_manager       # mmongoDBを使用する場合
-import s3_manager  # cloudcubeを使用する場合
-import clanbattle_manager
-from channel_manager import send_embed_message,send_error_message
+from manager import s3_manager  # cloudcubeを使用する場合
+from manager import clanbattle_manager
+from manager.channel_manager import send_embed_message,send_error_message
 
 
 
