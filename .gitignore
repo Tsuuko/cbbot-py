@@ -132,4 +132,4 @@ dmypy.json
 .vscode/
 .env.development
 test.py
-.code-workspace
+*.code-workspace
