@@ -23,12 +23,13 @@ class clanbattle(commands.Cog):
         self.cbstatus = clanbattle_manager.fetch_status()
         self.cb_is_open = False
         self.cb_remaining_days = -1
-        self.now_cbday = -1
+        self.now_cbday = None
         self.check_cbstatus.start()
         self.set_cbstatus.start()
 
     @commands.Cog.listener()
     async def on_message(self, message):
+        # チャンネルがBOTコマンドチャンネルの場合
         if message.channel.id == BOT_COMMAND_CHANNEL:
 
             # 凸登録用絵文字が押された場合に凸登録＆ロール付け替え
@@ -128,39 +129,40 @@ class clanbattle(commands.Cog):
         - ユーザー指定なし: `{prefix}regist`
         - ユーザー指定: `{prefix}regist -u {username}`
         """
-
-        if len(args) == 0:
-            try:
-                self.sheet.add_user(ctx.author.display_name)
-                embed = discord.Embed(
-                    title="✅ 登録完了",
-                    description=f"**{ctx.author.display_name}** さんを登録しました。",
-                    color=0x00ff00)
-                await send_embed_message(self.bot, embed,plain_text=ctx.author.mention, ctx=ctx)
-            except Exception as e:
-                msg = str(e)
-                await send_error_message(self.bot, msg, ctx=ctx)
-
-        elif len(args) == 2 and args[0] == "-u":
-            # BOT_MANAGER_ROLEチェック
-            if is_have_botmanager_role(ctx.author):
+        # チャンネルがBOTコマンドチャンネルの場合
+        if ctx.message.channel.id == BOT_COMMAND_CHANNEL:
+            if len(args) == 0:
                 try:
-                    self.sheet.add_user(args[1])
+                    self.sheet.add_user(ctx.author.display_name)
                     embed = discord.Embed(
                         title="✅ 登録完了",
-                        description=f"**{args[1]}** さんを登録しました。",
+                        description=f"**{ctx.author.display_name}** さんを登録しました。",
                         color=0x00ff00)
                     await send_embed_message(self.bot, embed,plain_text=ctx.author.mention, ctx=ctx)
-
                 except Exception as e:
                     msg = str(e)
-                    await send_error_message(self.bot, msg,plain_text=ctx.author.mention, ctx=ctx)
-            # BOT_MANAGER_ROLEを持っていない場合
+                    await send_error_message(self.bot, msg, ctx=ctx)
+
+            elif len(args) == 2 and args[0] == "-u":
+                # BOT_MANAGER_ROLEチェック
+                if is_have_botmanager_role(ctx.author):
+                    try:
+                        self.sheet.add_user(args[1])
+                        embed = discord.Embed(
+                            title="✅ 登録完了",
+                            description=f"**{args[1]}** さんを登録しました。",
+                            color=0x00ff00)
+                        await send_embed_message(self.bot, embed,plain_text=ctx.author.mention, ctx=ctx)
+
+                    except Exception as e:
+                        msg = str(e)
+                        await send_error_message(self.bot, msg,plain_text=ctx.author.mention, ctx=ctx)
+                # BOT_MANAGER_ROLEを持っていない場合
+                else:
+                    await send_botmanager_role_error(self.bot,plain_text=ctx.author.mention,ctx=ctx)
             else:
-                await send_botmanager_role_error(self.bot,plain_text=ctx.author.mention,ctx=ctx)
-        else:
-            msg = "コマンドの引数が正しくありません。"
-            await send_error_message(self.bot, msg,plain_text=ctx.author.mention, ctx=ctx)
+                msg = "コマンドの引数が正しくありません。"
+                await send_error_message(self.bot, msg,plain_text=ctx.author.mention, ctx=ctx)
 
     @commands.command(name='delete')
     async def cmd_delete(self, ctx, *args):
@@ -173,40 +175,41 @@ class clanbattle(commands.Cog):
         - ユーザー指定なし(自分): `{prefix}delete me`
         - ユーザー指定: `{prefix}delete -u {username}`
         """
-
-        if len(args) == 1 and args[0] == "me":
-            try:
-                self.sheet.delete_user(ctx.author.display_name)
-                embed = discord.Embed(
-                    title="✅ 削除完了",
-                    description=f"**{ctx.author.display_name}** さんを削除しました。",
-                    color=0x00ff00)
-                await send_embed_message(self.bot, embed,plain_text=ctx.author.mention, ctx=ctx)
-            except Exception as e:
-                msg = str(e)
-                await send_error_message(self.bot, msg,plain_text=ctx.author.mention, ctx=ctx)
-
-        elif len(args) == 2 and args[0] == "-u":
-            # BOT_MANAGER_ROLEチェック
-            if is_have_botmanager_role(ctx.author):
+        # チャンネルがBOTコマンドチャンネルの場合
+        if ctx.message.channel.id == BOT_COMMAND_CHANNEL:
+            if len(args) == 1 and args[0] == "me":
                 try:
-                    self.sheet.delete_user(args[1])
+                    self.sheet.delete_user(ctx.author.display_name)
                     embed = discord.Embed(
                         title="✅ 削除完了",
-                        description=f"**{args[1]}** さんを削除しました。",
+                        description=f"**{ctx.author.display_name}** さんを削除しました。",
                         color=0x00ff00)
                     await send_embed_message(self.bot, embed,plain_text=ctx.author.mention, ctx=ctx)
-
                 except Exception as e:
                     msg = str(e)
                     await send_error_message(self.bot, msg,plain_text=ctx.author.mention, ctx=ctx)
-            # BOT_MANAGER_ROLEを持っていない場合
-            else:
-                await send_botmanager_role_error(self.bot,plain_text=ctx.author.mention,ctx=ctx)
 
-        else:
-            msg = "コマンドの引数が正しくありません。"
-            await send_error_message(self.bot, msg,plain_text=ctx.author.mention, ctx=ctx)
+            elif len(args) == 2 and args[0] == "-u":
+                # BOT_MANAGER_ROLEチェック
+                if is_have_botmanager_role(ctx.author):
+                    try:
+                        self.sheet.delete_user(args[1])
+                        embed = discord.Embed(
+                            title="✅ 削除完了",
+                            description=f"**{args[1]}** さんを削除しました。",
+                            color=0x00ff00)
+                        await send_embed_message(self.bot, embed,plain_text=ctx.author.mention, ctx=ctx)
+
+                    except Exception as e:
+                        msg = str(e)
+                        await send_error_message(self.bot, msg,plain_text=ctx.author.mention, ctx=ctx)
+                # BOT_MANAGER_ROLEを持っていない場合
+                else:
+                    await send_botmanager_role_error(self.bot,plain_text=ctx.author.mention,ctx=ctx)
+
+            else:
+                msg = "コマンドの引数が正しくありません。"
+                await send_error_message(self.bot, msg,plain_text=ctx.author.mention, ctx=ctx)
 
     @commands.command(name='attack')
     async def cmd_attack(self, ctx, *args):
@@ -487,7 +490,7 @@ class clanbattle(commands.Cog):
 
                     # メッセージ追加
                     msg_list.append(f"""
-                    クランバトル{self.status['cb_days']-cb_remaining_days}日目です！
+                    クランバトル{self.now_cbday}日目です！
                     今日も頑張りましょう💪
                     """)
 
@@ -501,7 +504,7 @@ class clanbattle(commands.Cog):
                         error_msg_list.append(str(e))
 
                     print(
-                        f"定期実行: set_cbstatus: self.cb_is_open={self.cb_is_open}, self.cb_remaining_days={self.cb_remaining_days}, now_cbday={self.now_cbday}"
+                        f"定期実行: set_cbstatus: 日付進行: is_open={self.cb_is_open}, remaining_days={self.cb_remaining_days}, now_cbday={self.now_cbday}"
                     )
                 # ステータス変更なし
                 else:
@@ -509,32 +512,58 @@ class clanbattle(commands.Cog):
 
             # 現在の開催状況と取得した開催情報が異なる（非開催中->開催中 or 開催中->非開催中）
             elif self.cb_is_open != cb_is_open:
+                channel = self.bot.get_channel(CB_NOTIFICATION_CHANNEL_ID)
 
                 # 非開催中->開催中
                 if (self.cb_is_open == False) and (cb_is_open == True):
+
                     self.cb_is_open = cb_is_open
                     self.cb_remaining_days = cb_remaining_days
-                    self.now_cbday = now_cbday
 
-                    channel = self.bot.get_channel(CB_NOTIFICATION_CHANNEL_ID)
-                    # 開始メッセージのembed作成
+                    # 開催中メッセージのembed作成
                     embed = discord.Embed(
-                        title="🎉 クランバトルが開始しました 🎉",
+                        title="⚔ クランバトル開催中です ⚔"
+                        ,
                         color=0x00ff00)
 
-                    # メッセージ追加
-                    msg_list.append("""
-                    みなさん頑張りましょう💪
-                    """)
+                    # BOT起動時にクラバトが開催中の場合
+                    if self.now_cbday is None:
+                        self.now_cbday = now_cbday
 
-                    # ロールを付け替えInfoを追加
-                    try:
-                        await reset_attackrole(channel.guild)
-                        info_msg_list.append("メンバー全員の凸報告ロールをリセットしました。")
+                        # クラバト最終日以外
+                        if self.cb_remaining_days==0:
+                            msg_list.append(f"""
+                            クランバトル最終日です！
+                            本日23時59分までの開催のため、深夜勢はお気をつけください！
+                            """)
+                            print(f"定期実行: set_cbstatus: 初回起動_クラバト最終日以外: is_open={self.cb_is_open}, remaining_days={self.cb_remaining_days}, now_cbday={self.now_cbday}")
 
-                    # ロール付け替えに失敗した場合はエラー文を追加
-                    except Exception as e:
-                        error_msg_list.append(str(e))
+
+                        else:
+                            msg_list.append(f"""
+                            クランバトル{self.now_cbday}日目が開催中です！{self.cb_remaining_days}
+                            みなさん頑張りましょう💪
+                            """)
+                            print(f"定期実行: set_cbstatus: 初回起動_クラバト最終日: is_open={self.cb_is_open}, remaining_days={self.cb_remaining_days}, now_cbday={self.now_cbday}")
+
+                    # BOT起動中に日付が変わって開催中になった場合
+                    else:
+                        self.now_cbday = now_cbday
+
+                        # メッセージ追加
+                        msg_list.append("""
+                        みなさん頑張りましょう💪
+                        """)
+
+                        # ロールを付け替えInfoを追加
+                        try:
+                            await reset_attackrole(channel.guild)
+                            info_msg_list.append("メンバー全員の凸報告ロールをリセットしました。")
+
+                        # ロール付け替えに失敗した場合はエラー文を追加
+                        except Exception as e:
+                            error_msg_list.append(str(e))
+                        print(f"定期実行: set_cbstatus: クラバト日付進行: is_open={self.cb_is_open}, remaining_days={self.cb_remaining_days}, now_cbday={self.now_cbday}")
 
 
                 # 開催中->非開催中
@@ -542,7 +571,6 @@ class clanbattle(commands.Cog):
                     self.cb_is_open = cb_is_open
                     self.cb_remaining_days = cb_remaining_days
                     self.now_cbday = now_cbday
-                    channel = self.bot.get_channel(CB_NOTIFICATION_CHANNEL_ID)
 
                     # 終了メッセージのembed作成
                     embed = discord.Embed(
@@ -563,8 +591,6 @@ class clanbattle(commands.Cog):
                     except Exception as e:
                         error_msg_list.append(str(e))
 
-
-
                     # 凸管理シートリセット
                     try:
                         self.sheet.clear_all_attack()
@@ -572,14 +598,11 @@ class clanbattle(commands.Cog):
                     # リセットに失敗した場合はエラー文を追加
                     except Exception as e:
                         error_msg_list.append(str(e))
+                    print(f"定期実行: set_cbstatus: クラバト終了: is_open={self.cb_is_open}, remaining_days={self.cb_remaining_days}, now_cbday={self.now_cbday}")
 
-                print(
-                    f"定期実行: set_cbstatus: self.cb_is_open={self.cb_is_open}, self.cb_remaining_days={self.cb_remaining_days}, now_cbday={self.now_cbday}"
-                )
 
             # embedを設定してある場合は送信
             if embed is not None:
-
                 # 各セクションセット
                 if len(msg_list)>0:
                     embed.add_field(name="📝 メッセージ",value="\n".join(msg_list),inline=False)

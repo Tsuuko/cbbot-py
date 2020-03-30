@@ -22,6 +22,8 @@
 
 Prefixは`!`として説明します。適宜読み替えてください
 
+※のついたコマンドは`BOT_COMMAND_CHANNEL`のチャンネルでのみ実行できます
+
 ★のついたコマンドは`BOT_MANAGER_ROLE`ロールを持つユーザー限定です。
 
 ### Link
@@ -32,17 +34,15 @@ Prefixは`!`として説明します。適宜読み替えてください
 - [テスト関係](#テスト関係)
 - [凸管理関係](#凸管理関係)
 
-
-
 #### Prefix関係
 
 - `!prefix`
-  - 現在のPrefixを確認する。
+  - 現在のPrefixを確認する。  
     現在のPrefixの影響を受けない。
 
 - `set_prefix` ★
   
-  - Prefixを変更する
+  - Prefixを変更する  
     スペースを含む場合は""で囲む
   - 例
     - `set_prefix !`
@@ -51,40 +51,40 @@ Prefixは`!`として説明します。適宜読み替えてください
 #### テスト関係
 
 - `!help`
-  - ヘルプを表示する
+  - ヘルプを表示する  
     現在このページへのリンクを送信します。
 - `!test`
-  - コマンドテスト用
+  - コマンドテスト用  
     BOTが`テスト`と発言します
 - `!hello`
-  - メンションテスト用
+  - メンションテスト用  
     BOTが`Hello!`とメンションを送ります。
 - `!embtest`
-  - 埋め込みメッセージ（embed）表示テスト用
-    このBOTは埋め込みメッセージを多用しているため、リンクプレビューを有効にする必要があります。
+  - 埋め込みメッセージ（embed）表示テスト用  
+    このBOTは埋め込みメッセージを多用しているため、リンクプレビューを有効にする必要があります。  
     「ユーザー設定＞テキスト・画像＞リンクプレビュー（チャットで投稿されたリンクのサイト情報を表示する）」を有効にしてください。
 
 #### 凸管理関係
 
-- `!regist`
+- ※`!regist`
   - 凸管理シートにユーザーを登録する。
   - 例
     - 自分を登録：`!regist`
     - ユーザー指定 ★：`!regist -u ユーザー名`
-- `!delete`
+- ※`!delete`
   - 凸管理シートからユーザーを削除する。
   - 例
     - 自分を削除：`!delete me`
     - ユーザー指定 ★：`!delete -u ユーザー名`
-- 凸絵文字
-  - 凸登録する。
+- ※凸絵文字
+  - 凸登録する。  
     あらかじめサーバー絵文字を作成しておく必要があります。
   - 例
     - 1凸：`:attack1:`
     - 2凸：`:attack2:`
     - 3凸：`:attack3:`
-- `!attack`
-  - 凸登録する。
+- ※`!attack`
+  - 凸登録する。  
     凸回数に0を指定すると凸登録を削除します。
   - 例
     - 自分を登録：`!attack 凸回数
@@ -111,11 +111,18 @@ Heroku CLIを予めインストールしておいてください。
 
 ### Add-ons
 
-以下のアドオンを使用しています。
+以下のアドオンを使用しています。  
 アプリ作成後に追加してください。
 
 - [cloudcube](https://elements.heroku.com/addons/cloudcube)・・・設定したprefixの値を再起動後も保持するために使用
 
+### Buildpack
+
+以下のビルドパックが必要です。  
+アプリ作成後に追加してください。
+
+- heroku-buildpack-python <https://elements.heroku.com/buildpacks/heroku/heroku-buildpack-python>
+- heroku-buildpack-apt <https://elements.heroku.com/buildpacks/heroku/heroku-buildpack-apt>
 
 ### 環境変数
 

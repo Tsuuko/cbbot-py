@@ -53,27 +53,28 @@ def get_cbday():
     None
     ```
     """
-    #cb_status=fetch_status()
-    cb_status = {
-        'cb_start': datetime.strptime('2020/02/23 5:00:00',
-                                      '%Y/%m/%d %H:%M:%S'),
-        'cb_end': datetime.strptime('2020/02/28 23:59:59',
-                                    '%Y/%m/%d %H:%M:%S'),
-        'cb_days': 6
-    }
-    #now_datetime=datetime.now()
-    now = "2020-02-29 15:00:00"
-    now_datetime = datetime.strptime(now, '%Y-%m-%d %H:%M:%S')
+    cb_status=fetch_status()
+    #cb_status = {
+    #    'cb_start': datetime.strptime('2020/02/23 5:00:00',
+    #                                  '%Y/%m/%d %H:%M:%S'),
+    #    'cb_end': datetime.strptime('2020/02/28 23:59:59',
+    #                                '%Y/%m/%d %H:%M:%S'),
+    #    'cb_days': 6
+    #}
+    now_datetime=datetime.now()
+    #now = "2020-02-29 15:00:00"
+    #now_datetime = datetime.strptime(now, '%Y-%m-%d %H:%M:%S')
     now_cbday = (now_datetime - cb_status["cb_start"]).days + 1
 
-    print("現在日時：", now)
+    print("現在日時：", now_datetime)
     print("開始日時：", cb_status["cb_start"])
     print("終了日時：", cb_status["cb_end"])
     print("開催期間：", cb_status["cb_days"])
     print(cb_status['cb_days'] - now_cbday)
+    print(cb_status["cb_end"])
     if now_cbday <= 0:
         print(f"クラバト開催まであと{now_cbday+1}日")
-    elif now_cbday >= 1 and now_cbday <= cb_status["cb_days"]:
+    elif (now_cbday >= 1) and (now_cbday <= cb_status["cb_days"]) and now_datetime<cb_status["cb_end"]:
         print(f"クラバト開催中！　{now_cbday}/{cb_status['cb_days']}日目")
     else:
         print(f"クラバトは終了しています。{now_cbday-cb_status['cb_days']}日経過")
@@ -108,8 +109,12 @@ def set_cbstatus(status):
     remaining_days = status['cb_days'] - now_cbday
 
     # 1日目以上&開催日数以下の場合（開催中）
-    if now_cbday >= 1 and now_cbday <= status["cb_days"]:
+    #if now_cbday >= 1 and now_cbday <= status["cb_days"]:
+    if (now_cbday >= 1) and (now_cbday <= status["cb_days"]) and now_datetime<status["cb_end"]:
         return True, remaining_days, now_cbday
+    # 最終日の5時を回った場合
+    if remaining_days==0 and now_datetime>status["cb_end"]:
+        return False, remaining_days-1, now_cbday-1
     # それ以外（非開催中）
     else:
         return False, remaining_days, now_cbday
@@ -132,6 +137,34 @@ def shot_capture():
     images[0].save(f, "PNG")
     f.seek(0)
     return f
+
+### あきらめた
+#def is_need_send_last_day_notification(remaining_days:int,notification_hour:list):
+#    """
+#    notification_hourで指定した時間の場合にembedを返す。
+#    それ以外はNoneを返す。
+#
+#    params
+#    ----
+#    remaining_days:int # クラバト残り時間（最終日は0）
+#    notification_hour:list # 指定する時間を6から24のリストで返す(小数点OK)
+#        # 例
+#        notification_hour=[12,17,20,23] # 12,17,20,23時にTrueを返す
+#        notification_hour=[12.5,20.5] # 12時半,20時半にTrueを返す
+#
+#    return
+#    ---
+#    ```
+#    - 指定した時間:discord.Embed
+#    - それ以外:None
+#    ```
+#    """
+#    # 現在日時
+#    now_datetime = datetime.now()
+
+
+
+
 
 class spreadsheet:
     #def __init__(self):
@@ -302,5 +335,4 @@ class spreadsheet:
 
 
 if __name__ == "__main__":
-    spreadsheet = spreadsheet()
-    spreadsheet.clear_all_attack()
+    get_cbday()
