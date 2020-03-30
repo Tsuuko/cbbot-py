@@ -8,6 +8,7 @@ from pdf2image import convert_from_bytes
 import requests
 from io import BytesIO
 
+SPREADSHEET_URL=load_settings.SPREADSHEET_URL
 
 def fetch_status():
     """
@@ -130,7 +131,7 @@ def shot_capture():
     ```
     """
     r = requests.get(
-        "https://docs.google.com/spreadsheets/d/10fTu0MzvI-eNysZ1FGD-dmpogBsDKb_FKjdPFuxuaEM/export?format=pdf&size=executive&portrait=false&scale=4&top_margin=0.10&bottom_margin=0.00&left_margin=0.10&right_margin=0.00&horizontal_alignment=CENTER&vertical_alignment=MIDDLE"
+        SPREADSHEET_URL+"export?format=pdf&size=executive&portrait=false&scale=4&top_margin=0.10&bottom_margin=0.00&left_margin=0.10&right_margin=0.00&horizontal_alignment=CENTER&vertical_alignment=MIDDLE"
     )
     images = convert_from_bytes(r.content)
     f = BytesIO()
