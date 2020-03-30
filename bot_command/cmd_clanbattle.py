@@ -374,6 +374,30 @@ class clanbattle(commands.Cog):
             send_botmanager_role_error(self.bot,plain_text=ctx.author.mention,ctx=ctx)
 
 
+    @commands.command(name='clear_attackrole')
+    async def cmd_clear_attackrole(self, ctx):
+        """
+        全員の凸登録ロールをクリアする。 ★BOT_MANAGER_ROLE限定
+
+        Commands
+        ----------
+        - `{prefix}clear_attackrole`
+        """
+        # BOT_MANAGER_ROLEチェック
+        if is_have_botmanager_role(ctx.author):
+            try:
+                await clear_attackrole(ctx.guild)
+                embed = discord.Embed(
+                    title="✅ 実行完了",
+                    description="全員の凸登録ロールを削除しました。",
+                    color=0x00ff00)
+                await send_embed_message(self.bot, embed,plain_text=ctx.author.mention, ctx=ctx)
+            except Exception as e:
+                await send_error_message(self.bot,str(e),plain_text=ctx.author.mention,ctx=ctx)
+        # BOT_MANAGER_ROLEを持っていない場合
+        else:
+            send_botmanager_role_error(self.bot,plain_text=ctx.author.mention,ctx=ctx)
+
 
     #@commands.command(name='attacked')
     #async def cmd_set_attackrole(self, ctx):
