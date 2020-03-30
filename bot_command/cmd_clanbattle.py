@@ -121,8 +121,7 @@ class clanbattle(commands.Cog):
     @commands.command(name='regist')
     async def cmd_regist(self, ctx, *args):
         """
-        スプレッドシートにユーザーを登録する。
-        ★ユーザー指定はBOT_MANAGER_ROLE限定
+        スプレッドシートにユーザーを登録する。 ★ユーザー指定はBOT_MANAGER_ROLE限定
 
         Commands
         ----------
@@ -167,8 +166,7 @@ class clanbattle(commands.Cog):
     @commands.command(name='delete')
     async def cmd_delete(self, ctx, *args):
         """
-        スプレッドシートからユーザーを削除する。
-        ★ユーザー指定はBOT_MANAGER_ROLE限定
+        スプレッドシートからユーザーを削除する。 ★ユーザー指定はBOT_MANAGER_ROLE限定
 
         Commands
         ----------
@@ -214,7 +212,7 @@ class clanbattle(commands.Cog):
     @commands.command(name='attack')
     async def cmd_attack(self, ctx, *args):
         """
-        凸登録をする。
+        凸登録をする。 ★ユーザー指定はBOT_MANAGER_ROLE限定
 
         Commands
         ----------
@@ -354,7 +352,7 @@ class clanbattle(commands.Cog):
     @commands.command(name='reset_attackrole')
     async def cmd_reset_attackrole(self, ctx):
         """
-        全員の凸登録ロールをリセットする。
+        全員の凸登録ロールをリセットする。 ★BOT_MANAGER_ROLE限定
 
         Commands
         ----------
@@ -405,7 +403,7 @@ class clanbattle(commands.Cog):
     @commands.command(name='clear_sheet')
     async def clear_sheet(self, ctx):
         """
-        凸管理シートをクリアする。
+        凸管理シートをクリアする。 ★BOT_MANAGER_ROLE限定
 
         Commands
         ----------
@@ -431,7 +429,7 @@ class clanbattle(commands.Cog):
     @commands.command(name='capture')
     async def capture(self, ctx):
         """
-        スプレッドシートキャプチャ画像送信
+        凸管理シートキャプチャ画像送信
         PDFでダウンロードして画像に変換し、送信する。
 
         Commands

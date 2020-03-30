@@ -72,15 +72,15 @@ class channel(commands.Cog):
     @commands.command(name='prefix')
     async def __prefix(self, ctx):
         """
-        on_messageで定義しているためprefixコマンドを捨てる
+        現在のprefixを確認する。 現在のprefixの影響を受けず`!`固定。
         """
         pass
 
     @commands.command(name='set_prefix')
     async def cmd_set_prefix(self, ctx, *args):
         """
-        ★BOT_MANAGER_ROLE限定
-        prefixを変更する。
+        prefixを変更する。 ★BOT_MANAGER_ROLE限定
+
 
         スペースを含む場合は""で囲む
 
@@ -120,18 +120,6 @@ class channel(commands.Cog):
             await send_embed_message(self.bot,embed,plain_text=ctx.author.mention,ctx=ctx)
         else:
             await send_botmanager_role_error(self.bot,plain_text=ctx.author.mention,ctx=ctx)
-
-    @commands.command(name='help')
-    async def test(self, ctx):
-        """
-        ヘルプ表示
-
-        Commands
-        ----------
-        - `{prefix}help`
-        """
-        await ctx.send("help")
-
 
     @commands.command(name='test')
     async def test(self, ctx):
