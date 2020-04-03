@@ -497,53 +497,58 @@ class clanbattle(commands.Cog):
             embed=None
 
             # debug
-            info_msg_list.append(f"**Debug_Data**")
-            info_msg_list.append(f"cb_is_open:{cb_is_open}")
-            info_msg_list.append(f"self.cb_is_open:{self.cb_is_open}")
-            info_msg_list.append(f"cb_remaining_days:{cb_remaining_days}")
-            info_msg_list.append(f"self.cb_remaining_days:{self.cb_remaining_days}")
-            info_msg_list.append(f"now_cbday:{now_cbday}")
-            info_msg_list.append(f"self.now_cbday:{self.now_cbday}")
+            #info_msg_list.append(f"**Debug_Data**")
+            #info_msg_list.append(f"cb_is_open:{cb_is_open}")
+            #info_msg_list.append(f"self.cb_is_open:{self.cb_is_open}")
+            #info_msg_list.append(f"cb_remaining_days:{cb_remaining_days}")
+            #info_msg_list.append(f"self.cb_remaining_days:{self.cb_remaining_days}")
+            #info_msg_list.append(f"now_cbday:{now_cbday}")
+            #info_msg_list.append(f"self.now_cbday:{self.now_cbday}")
             ####
 
             # 現在の開催状況と取得した開催情報が同じ
             if (self.cb_is_open == cb_is_open):
-                # 日付が進んだ場合
-                if self.cb_remaining_days > cb_remaining_days:
-                    self.cb_is_open = cb_is_open
-                    self.cb_remaining_days = cb_remaining_days
-                    self.now_cbday = now_cbday
-                    channel = self.bot.get_channel(CB_NOTIFICATION_CHANNEL_ID)
+                # クラバト開催中の場合
+                if cb_is_open:
+                    # 日付が進んだ場合
+                    if self.cb_remaining_days > cb_remaining_days:
+                        self.cb_is_open = cb_is_open
+                        self.cb_remaining_days = cb_remaining_days
+                        self.now_cbday = now_cbday
+                        channel = self.bot.get_channel(CB_NOTIFICATION_CHANNEL_ID)
 
-                    # 開始メッセージのembed作成
-                    embed = discord.Embed(
-                        title="🗓 日付が変わりました 🗓",
-                        color=0x00ff00)
+                        # 開始メッセージのembed作成
+                        embed = discord.Embed(
+                            title="🗓 日付が変わりました 🗓",
+                            color=0x00ff00)
 
-                    # メッセージ追加
-                    msg_list.append(f"""
-                    クランバトル{self.now_cbday}日目です！
-                    今日も頑張りましょう💪
-                    """)
+                        # メッセージ追加
+                        msg_list.append(f"""
+                        クランバトル{self.now_cbday}日目です！
+                        今日も頑張りましょう💪a
+                        """)
 
-                    # ロールを付け替えInfoを追加
-                    try:
-                        await reset_attackrole(channel.guild)
-                        info_msg_list.append("メンバー全員の凸報告ロールをリセットしました。")
+                        # ロールを付け替えInfoを追加
+                        try:
+                            await reset_attackrole(channel.guild)
+                            info_msg_list.append("メンバー全員の凸報告ロールをリセットしました。")
 
-                    # ロール付け替えに失敗した場合はエラー文を追加
-                    except Exception as e:
-                        error_msg_list.append(str(e))
+                        # ロール付け替えに失敗した場合はエラー文を追加
+                        except Exception as e:
+                            error_msg_list.append(str(e))
 
-                    print(
-                        f"定期実行: set_cbstatus: 日付進行: is_open={self.cb_is_open}, remaining_days={self.cb_remaining_days}, now_cbday={self.now_cbday}"
-                    )
-                # ステータス変更なし
+                        print(
+                            f"定期実行: set_cbstatus: 日付進行: is_open={self.cb_is_open}, remaining_days={self.cb_remaining_days}, now_cbday={self.now_cbday}"
+                        )
+                    # ステータス変更なし
+                    else:
+                        pass
+                # 非開催中
                 else:
                     pass
 
             # 現在の開催状況と取得した開催情報が異なる（非開催中->開催中 or 開催中->非開催中）
-            elif self.cb_is_open is not cb_is_open:
+            elif self.cb_is_open != cb_is_open:
                 channel = self.bot.get_channel(CB_NOTIFICATION_CHANNEL_ID)
 
                 # 非開催中->開催中
@@ -589,7 +594,7 @@ class clanbattle(commands.Cog):
 
                         # ロールを付け替えInfoを追加
                         try:
-                            #await reset_attackrole(channel.guild)
+                            await reset_attackrole(channel.guild)
                             info_msg_list.append("メンバー全員の凸報告ロールをリセットしました。")
 
                         # ロール付け替えに失敗した場合はエラー文を追加
@@ -599,7 +604,7 @@ class clanbattle(commands.Cog):
 
 
                 # 開催中->非開催中
-                elif (self.cb_is_open == True) and (cb_is_open == False):
+                elif (self.cb_is_open is True) and (cb_is_open is False):
                     self.cb_is_open = cb_is_open
                     self.cb_remaining_days = cb_remaining_days
                     self.now_cbday = now_cbday
