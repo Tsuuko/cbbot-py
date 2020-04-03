@@ -543,7 +543,7 @@ class clanbattle(commands.Cog):
                     pass
 
             # 現在の開催状況と取得した開催情報が異なる（非開催中->開催中 or 開催中->非開催中）
-            elif self.cb_is_open != cb_is_open:
+            elif self.cb_is_open is not cb_is_open:
                 channel = self.bot.get_channel(CB_NOTIFICATION_CHANNEL_ID)
 
                 # 非開催中->開催中
@@ -589,7 +589,7 @@ class clanbattle(commands.Cog):
 
                         # ロールを付け替えInfoを追加
                         try:
-                            await reset_attackrole(channel.guild)
+                            #await reset_attackrole(channel.guild)
                             info_msg_list.append("メンバー全員の凸報告ロールをリセットしました。")
 
                         # ロール付け替えに失敗した場合はエラー文を追加
