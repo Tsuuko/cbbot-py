@@ -496,6 +496,16 @@ class clanbattle(commands.Cog):
             # embed
             embed=None
 
+            # debug
+            info_msg_list.append(f"**Debug_Data**")
+            info_msg_list.append(f"cb_is_open:{cb_is_open}")
+            info_msg_list.append(f"self.cb_is_open:{self.cb_is_open}")
+            info_msg_list.append(f"cb_remaining_days:{cb_remaining_days}")
+            info_msg_list.append(f"self.cb_remaining_days:{self.cb_remaining_days}")
+            info_msg_list.append(f"now_cbday:{now_cbday}")
+            info_msg_list.append(f"self.now_cbday:{self.now_cbday}")
+            ####
+
             # 現在の開催状況と取得した開催情報が同じ
             if (self.cb_is_open == cb_is_open):
                 # 日付が進んだ場合
