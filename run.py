@@ -37,12 +37,12 @@ bot = commands.Bot(command_prefix=prefix)
 async def on_ready():
     # リッチプレセンス（～をプレイ中）を設定
     await bot.change_presence(activity=discord.Game("dev"))
-    for guild in bot.guilds:
-        channel=guild.system_channel
-        embed = discord.Embed(
-            title="ℹ BOTが起動しました",
-            color=0x00ff00)
-        await send_embed_message(bot,embed,channel=channel)
+    #for guild in bot.guilds:
+    #    channel=guild.system_channel
+    #    embed = discord.Embed(
+    #        title="ℹ BOTが起動しました",
+    #        color=0x00ff00)
+    #    await send_embed_message(bot,embed,channel=channel)
 
     # 起動したらターミナルにログイン通知が表示される
     print('ログインしました')
