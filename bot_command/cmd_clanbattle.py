@@ -107,10 +107,7 @@ class clanbattle(commands.Cog):
                     await unset_role(self.bot, "凸未報告", message=message)
 
                 else:
-                    msg = f"""
-                        クランバトル開催期間ではありません。
-                        開催期間は`{self.bot.command_prefix}status`で確認できます。
-                        """
+                    msg = f"クランバトル開催期間ではありません。\n開催期間は`{self.bot.command_prefix}status`で確認できます。"
                     await send_error_message(self.bot, msg, message=message)
 
 
@@ -256,9 +253,9 @@ class clanbattle(commands.Cog):
                                                        ctx=ctx)
                         else:
                             msg = """
-                                凸回数が正しくありません。
-                                0以上3以下で入力してください。
-                                （0を入力で凸登録をキャンセルします。）
+凸回数が正しくありません。
+0以上3以下で入力してください。
+（0を入力で凸登録をキャンセルします。）
                                 """
                             await send_error_message(self.bot, msg,plain_text=ctx.author.mention, ctx=ctx)
 
@@ -284,9 +281,9 @@ class clanbattle(commands.Cog):
 
                                 else:
                                     msg = """
-                                        凸回数が正しくありません。
-                                        0以上3以下で入力してください。
-                                        （0を入力で凸登録をキャンセルします。）
+凸回数が正しくありません。
+0以上3以下で入力してください。
+（0を入力で凸登録をキャンセルします。）
                                         """
                                     await send_error_message(self.bot,
                                                              msg,plain_text=ctx.author.mention,
@@ -294,10 +291,10 @@ class clanbattle(commands.Cog):
 
                             else:
                                 msg = f"""
-                                    コマンドの引数が正しくありません。
-                                    ・自分の凸登録:`{self.bot.command_prefix}attack 回数`
-                                    ・他人の凸登録:`{self.bot.command_prefix}attack -u ニックネーム 回数`
-                                    　※ニックネームは正確に入力する必要があります。
+コマンドの引数が正しくありません。
+・自分の凸登録:`{self.bot.command_prefix}attack 回数`
+・他人の凸登録:`{self.bot.command_prefix}attack -u ニックネーム 回数`
+　※ニックネームは正確に入力する必要があります。
                                     """
                                 await send_error_message(self.bot,
                                                          msg,plain_text=ctx.author.mention,
@@ -307,19 +304,16 @@ class clanbattle(commands.Cog):
                             await send_botmanager_role_error(self.bot,plain_text=ctx.author.mention, ctx=ctx)
                     else:
                         msg = f"""
-                            コマンドの引数が正しくありません。
-                            ・自分の凸登録:`{self.bot.command_prefix}attack 回数`
-                            ・他人の凸登録:`{self.bot.command_prefix}attack -u ニックネーム 回数`
-                            　※ニックネームは正確に入力する必要があります。
+コマンドの引数が正しくありません。
+・自分の凸登録:`{self.bot.command_prefix}attack 回数`
+・他人の凸登録:`{self.bot.command_prefix}attack -u ニックネーム 回数`
+　※ニックネームは正確に入力する必要があります。
                             """
                         await send_error_message(self.bot, msg,plain_text=ctx.author.mention, ctx=ctx)
 
 
                 else:
-                    msg = f"""
-                        クランバトル開催期間ではありません。
-                        開催期間は`{self.bot.command_prefix}status`で確認できます。
-                        """
+                    msg = f"クランバトル開催期間ではありません。\n開催期間は`{self.bot.command_prefix}status`で確認できます。"
                     await send_error_message(self.bot, msg,plain_text=ctx.author.mention, ctx=ctx)
             except:
                 msg = traceback.format_exc()
@@ -523,10 +517,7 @@ class clanbattle(commands.Cog):
                             color=0x00ff00)
 
                         # メッセージ追加
-                        msg_list.append(f"""
-                        クランバトル{self.now_cbday}日目です！
-                        今日も頑張りましょう💪
-                        """)
+                        msg_list.append(f"クランバトル{self.now_cbday}日目です！\n今日も頑張りましょう💪")
 
                         # ロールを付け替えInfoを追加
                         try:
@@ -569,18 +560,12 @@ class clanbattle(commands.Cog):
 
                         # クラバト最終日以外
                         if self.cb_remaining_days==0:
-                            msg_list.append(f"""
-                            クランバトル最終日です！
-                            本日23時59分までの開催のため、深夜勢はお気をつけください！
-                            """)
+                            msg_list.append(f"クランバトル最終日です！\n本日23時59分までの開催のため、深夜勢はお気をつけください！")
                             print(f"定期実行: set_cbstatus: 初回起動_クラバト最終日以外: is_open={self.cb_is_open}, remaining_days={self.cb_remaining_days}, now_cbday={self.now_cbday}")
 
 
                         else:
-                            msg_list.append(f"""
-                            クランバトル{self.now_cbday}日目が開催中です！
-                            みなさん頑張りましょう💪
-                            """)
+                            msg_list.append(f"クランバトル{self.now_cbday}日目が開催中です！\nみなさん頑張りましょう💪")
                             print(f"定期実行: set_cbstatus: 初回起動_クラバト最終日: is_open={self.cb_is_open}, remaining_days={self.cb_remaining_days}, now_cbday={self.now_cbday}")
 
                     # BOT起動中に日付が変わって開催中になった場合
@@ -588,9 +573,7 @@ class clanbattle(commands.Cog):
                         self.now_cbday = now_cbday
 
                         # メッセージ追加
-                        msg_list.append("""
-                        みなさん頑張りましょう💪
-                        """)
+                        msg_list.append("みなさん頑張りましょう💪")
 
                         # ロールを付け替えInfoを追加
                         try:
@@ -615,9 +598,7 @@ class clanbattle(commands.Cog):
                         color=0x00ff00)
 
                     # メッセージ追加
-                    msg_list.append("""
-                    みなさんお疲れ様でした🍵
-                    """)
+                    msg_list.append("みなさんお疲れ様でした🍵")
 
                     # ロールを削除しInfoを追加
                     try:
