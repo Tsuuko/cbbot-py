@@ -525,7 +525,7 @@ class clanbattle(commands.Cog):
                         # メッセージ追加
                         msg_list.append(f"""
                         クランバトル{self.now_cbday}日目です！
-                        今日も頑張りましょう💪a
+                        今日も頑張りましょう💪
                         """)
 
                         # ロールを付け替えInfoを追加
@@ -578,7 +578,7 @@ class clanbattle(commands.Cog):
 
                         else:
                             msg_list.append(f"""
-                            クランバトル{self.now_cbday}日目が開催中です！{self.cb_remaining_days}
+                            クランバトル{self.now_cbday}日目が開催中です！
                             みなさん頑張りましょう💪
                             """)
                             print(f"定期実行: set_cbstatus: 初回起動_クラバト最終日: is_open={self.cb_is_open}, remaining_days={self.cb_remaining_days}, now_cbday={self.now_cbday}")
