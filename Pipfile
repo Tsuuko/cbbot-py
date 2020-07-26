@@ -5,7 +5,6 @@ verify_ssl = true
 
 [dev-packages]
 pylint = "*"
-python-dotenv = "*"
 yapf = "*"
 
 [packages]
@@ -16,6 +15,7 @@ boto3 = "*"
 gspread = "*"
 oauth2client = "*"
 pdf2image = "*"
+python-dotenv = "*"
 
 [requires]
 python_version = "3.8"
