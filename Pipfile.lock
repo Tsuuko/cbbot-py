@@ -57,10 +57,10 @@
         },
         "botocore": {
             "hashes": [
-                "sha256:42b320b449df22cdb1232913e4a066919d127feb8e58ad98898831e6255ccfe0",
-                "sha256:eca25f01c503c2b86b394497f875a0eb0d3fe367dbc032f3a02851ba7e827109"
+                "sha256:198a62d387eb64b4c1dde33a9c41e96b07884c68c1442dd7c7d38123592aae7c",
+                "sha256:5f984def778b0000a12cf28ec727d64634ca46ab0dcdb5ce8b654bfb2a1fb99c"
             ],
-            "version": "==1.17.47"
+            "version": "==1.17.51"
         },
         "cachetools": {
             "hashes": [
@@ -100,10 +100,10 @@
         },
         "google-auth": {
             "hashes": [
-                "sha256:2f34dd810090d0d4c9d5787c4ad7b4413d1fbfb941e13682c7a2298d3b6cdcc8",
-                "sha256:ce1fb80b5c6d3dd038babcc43e221edeafefc72d983b3dc28b67b996f76f00b9"
+                "sha256:982e1f82cace752134660b4c0ff660761b32146a55abb3ad6d225529012af87c",
+                "sha256:f2498ad9cac3d2942d6c509ba18c4639656b366681881a1805f44f2a0c2d46f1"
             ],
-            "version": "==1.20.1"
+            "version": "==1.21.0"
         },
         "google-auth-oauthlib": {
             "hashes": [
@@ -180,11 +180,11 @@
         },
         "pdf2image": {
             "hashes": [
-                "sha256:df6b825f7f26df35b873642725a7ee37dfc8a531b711274a8ad2ee830c8b72d0",
-                "sha256:ed2935991de449e55ceea2eff7c5d18c7b5cde4a2f6b9f3d56a430e8c5b77969"
+                "sha256:066527e1bf954762fb4369c677ae3bc15f2ce8707eee830cccef8471fde736d7",
+                "sha256:cf1b2dc77cf3e050cb06078cd7373469c8dca93d4cea1af2a2e1bbe0ed4a8800"
             ],
             "index": "pypi",
-            "version": "==1.13.1"
+            "version": "==1.14.0"
         },
         "pillow": {
             "hashes": [
