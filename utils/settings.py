@@ -3,7 +3,7 @@
 # ---------------------------------------------------------------------------- #
 
 import os
-from typing import Final, List
+from typing import Final, List, Union
 
 from utils import extension
 
@@ -18,15 +18,39 @@ if os.environ.get("DYNO") is None:
     load_dotenv(dotenv_path, encoding="utf8")
 # ----------------------------------------------------------------------------- #
 
+
 # ----------------------------------- 共通 ------------------------------------ #
 
 # エクステンション <https://discordpy.readthedocs.io/ja/latest/ext/commands/extensions.html>
 EXTENSIONS: Final[List[str]] = extension.get_extension_path_list()
 
 # DiscordBOTのトークン
-DISCORD_BOT_TOKEN: Final[str] = os.environ.get("DISCORD_BOT_TOKEN")
+DISCORD_BOT_TOKEN: Final[Union[str, None]] = os.environ.get("DISCORD_BOT_TOKEN")
 
 # 〇〇をプレイ中の文字列
-ACTIVITY_NAME: Final[str] = os.getenv("ACTIVITY_NAME")
+ACTIVITY_NAME: Final[Union[str, None]] = os.getenv("ACTIVITY_NAME")
+
+# メンバーのサーバー入退室通知を送信するチャンネル
+MEMBER_NOTIFICATION_CHANNEL_ID: Final[Union[str, None]] = (
+    int(os.getenv("MEMBER_NOTIFICATION_CHANNEL_ID"))
+    if os.getenv("MEMBER_NOTIFICATION_CHANNEL_ID").isalnum()
+    else None
+)
+# ----------------------------------------------------------------------------- #
+
+
+# --------------------------------- メッセージ --------------------------------- #
+class MessageText:
+    WELCOME_MESSAGE: Final[
+        str
+    ] = """\
+ようこそ！**{display_name}** さん 👏
+"""
+    LEAVE_MESSAGE: Final[
+        str
+    ] = """\
+さようなら、**{display_name}** さん 👋
+"""
+
 
 # ----------------------------------------------------------------------------- #
