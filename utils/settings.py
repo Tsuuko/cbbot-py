@@ -31,26 +31,7 @@ DISCORD_BOT_TOKEN: Final[Union[str, None]] = os.environ.get("DISCORD_BOT_TOKEN")
 ACTIVITY_NAME: Final[Union[str, None]] = os.getenv("ACTIVITY_NAME")
 
 # メンバーのサーバー入退室通知を送信するチャンネル
-MEMBER_NOTIFICATION_CHANNEL_ID: Final[Union[str, None]] = (
-    int(os.getenv("MEMBER_NOTIFICATION_CHANNEL_ID"))
-    if os.getenv("MEMBER_NOTIFICATION_CHANNEL_ID").isalnum()
-    else None
-)
-# ----------------------------------------------------------------------------- #
-
-
-# --------------------------------- メッセージ --------------------------------- #
-class MessageText:
-    WELCOME_MESSAGE: Final[
-        str
-    ] = """\
-ようこそ！**{display_name}** さん 👏
-"""
-    LEAVE_MESSAGE: Final[
-        str
-    ] = """\
-さようなら、**{display_name}** さん 👋
-"""
-
-
+MEMBER_NOTIFICATION_CHANNEL_ID: Final[Union[int, None]] = (
+    lambda x: int(x) if x.isalnum() else None
+)(os.getenv("MEMBER_NOTIFICATION_CHANNEL_ID"))
 # ----------------------------------------------------------------------------- #

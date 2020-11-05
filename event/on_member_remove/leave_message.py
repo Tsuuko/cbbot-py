@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from utils import logger, settings
+from utils import constants, logger, settings
 
 
 class LeaveMessage(commands.Cog):
@@ -17,12 +17,10 @@ class LeaveMessage(commands.Cog):
         channel = self.bot.get_channel(settings.MEMBER_NOTIFICATION_CHANNEL_ID)
 
         if not settings.MEMBER_NOTIFICATION_CHANNEL_ID:
-            await self.logger.error(
-                "MEMBER_NOTIFICATION_CHANNEL_IDで指定したChannelが見つかりません。"
-            )
+            self.logger.error("MEMBER_NOTIFICATION_CHANNEL_IDで指定したChannelが見つかりません。")
             return
 
-        self.logger.info(f"[メンバー脱退] {member} - {member.id}")
+        self.logger.info(f"[メンバー脱退] {member} - {member.id}")  # type: ignore
         await channel.send(
-            settings.MessageText.LEAVE_MESSAGE.format(display_name=member.display_name)
+            constants.MessageText.LEAVE_MESSAGE.format(display_name=member.display_name)
         )

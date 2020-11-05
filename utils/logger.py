@@ -37,4 +37,4 @@ def _set_logger_settings(logger) -> None:
 
 
 def printLoggers() -> None:
-    pprint(logging.Logger.manager.loggerDict)
+    pprint(logging.Logger.manager.loggerDict)  # type: ignore
