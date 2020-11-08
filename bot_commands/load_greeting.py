@@ -1,9 +1,10 @@
 from discord.ext import commands
 
 from .greeting.hello import Hello
+from .greeting.dev import Dev
 
 
-class Greeting(Hello):
+class Greeting(Hello, Dev):
     pass
 
 

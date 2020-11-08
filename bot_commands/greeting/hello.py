@@ -7,4 +7,4 @@ class Hello(commands.Cog):
 
     @commands.command(name="hello")
     async def hello(self, ctx: commands.Context) -> None:
-        await ctx.send("hello!")
+        await ctx.send("Hello!")
