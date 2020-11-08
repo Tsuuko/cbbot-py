@@ -35,9 +35,8 @@ class EmbedColor:
     EmbedColor定数
     """
 
-    PRIMARY: Final[int] = 0x0275D8
     SUCCESS: Final[int] = 0x5CB85C
-    INFO: Final[int] = 0x5BC0DE
+    INFO: Final[int] = 0x0275D8
     WARN: Final[int] = 0xF0AD4E
     ERROR: Final[int] = 0xD9534F
 

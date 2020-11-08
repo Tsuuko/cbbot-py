@@ -22,7 +22,5 @@ class WelcomeMessage(commands.Cog):
 
         self.logger.info(f"[メンバー参加] {member} - {member.id}")  # type: ignore
         await channel.send(
-            constants.MessageText.WELCOME_MESSAGE.format(
-                display_name=member.display_name
-            )
+            constants.MessageText.WELCOME_MESSAGE.format(display_name=member.display_name)
         )
