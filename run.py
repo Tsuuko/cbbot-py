@@ -30,7 +30,11 @@ except:
     prefix = "!"
 ##
 
-bot = commands.Bot(command_prefix=prefix)
+# メンバーインテント有効化（メンバー加入/脱退イベント等取得のため）
+intents: discord.Intents = discord.Intents.default()
+intents.members = True
+
+bot = commands.Bot(command_prefix=prefix,intents=intents)
 
 
 @bot.event
