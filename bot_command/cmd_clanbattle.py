@@ -365,7 +365,7 @@ class clanbattle(commands.Cog):
                 await send_error_message(self.bot,str(e),plain_text=ctx.author.mention,ctx=ctx)
         # BOT_MANAGER_ROLEを持っていない場合
         else:
-            send_botmanager_role_error(self.bot,plain_text=ctx.author.mention,ctx=ctx)
+            await send_botmanager_role_error(self.bot,plain_text=ctx.author.mention,ctx=ctx)
 
 
     @commands.command(name='clear_attackrole')
@@ -390,7 +390,7 @@ class clanbattle(commands.Cog):
                 await send_error_message(self.bot,str(e),plain_text=ctx.author.mention,ctx=ctx)
         # BOT_MANAGER_ROLEを持っていない場合
         else:
-            send_botmanager_role_error(self.bot,plain_text=ctx.author.mention,ctx=ctx)
+            await send_botmanager_role_error(self.bot,plain_text=ctx.author.mention,ctx=ctx)
 
 
     #@commands.command(name='attacked')
@@ -438,10 +438,10 @@ class clanbattle(commands.Cog):
                 await send_embed_message(self.bot,embed,plain_text=ctx.author.mention,ctx=ctx)
 
             except Exception as e:
-                send_error_message(self.bot,str(e),plain_text=ctx.author.mention,ctx=ctx)
+                await send_error_message(self.bot,str(e),plain_text=ctx.author.mention,ctx=ctx)
         # BOT_MANAGER_ROLEを持っていない場合
         else:
-            send_botmanager_role_error(self.bot,plain_text=ctx.author.mention,ctx=ctx)
+            await send_botmanager_role_error(self.bot,plain_text=ctx.author.mention,ctx=ctx)
 
 
     @commands.command(name='capture')
