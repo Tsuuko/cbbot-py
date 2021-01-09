@@ -40,7 +40,7 @@ bot = commands.Bot(command_prefix=prefix,intents=intents)
 @bot.event
 async def on_ready():
     # リッチプレセンス（～をプレイ中）を設定
-    await bot.change_presence(activity=discord.Game("dev"))
+    await bot.change_presence(activity=discord.Game("プリコネR"))
     #for guild in bot.guilds:
     #    channel=guild.system_channel
     #    embed = discord.Embed(
