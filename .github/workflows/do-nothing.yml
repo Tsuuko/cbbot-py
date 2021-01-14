@@ -1,0 +1,16 @@
+name: do-nothing
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  do-nothing:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: do-nothing
+        run: |
+          :
