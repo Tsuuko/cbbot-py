@@ -82,10 +82,10 @@
         },
         "botocore": {
             "hashes": [
-                "sha256:2958e3912939558fd789a64b23a10039d8b0c0c84a23b573f3f2e3154de357ad",
-                "sha256:8a7f85bf05ad62551b0e6dfeeec471147b330cb2b5c7f48795057e811e6a2e77"
+                "sha256:6a672ba41dd00e5c1c1824ca8143d180d88de8736d78c0b1f96b8d3cb0466561",
+                "sha256:f7f103fa0651c69dd360c7d0ecd874854303de5cc0869e0cbc2818a52baacc69"
             ],
-            "version": "==1.20.44"
+            "version": "==1.20.49"
         },
         "cachetools": {
             "hashes": [
@@ -110,17 +110,17 @@
         },
         "discord-py": {
             "hashes": [
-                "sha256:3df148daf6fbcc7ab5b11042368a3cd5f7b730b62f09fb5d3cbceff59bcfbb12"
+                "sha256:399b80d576a63fa901300e80080568e1d9cd9c21260ca622fd7145c0009278fa"
             ],
             "index": "pypi",
-            "version": "==1.6.0"
+            "version": "==1.7.1"
         },
         "google-auth": {
             "hashes": [
-                "sha256:9bd436d19ab047001a1340720d2b629eb96dd503258c524921ec2af3ee88a80e",
-                "sha256:dcaba3aa9d4e0e96fd945bf25a86b6f878fcb05770b67adbeb50a63ca4d28a5e"
+                "sha256:186fe2564634d67fbbb64f3daf8bc8c9cecbb2a7f535ed1a8a71795e50db8d87",
+                "sha256:70b39558712826e41f65e5f05a8d879361deaf84df8883e5dd0ec3d0da6ab66e"
             ],
-            "version": "==1.28.0"
+            "version": "==1.28.1"
         },
         "google-auth-oauthlib": {
             "hashes": [
