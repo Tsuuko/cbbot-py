@@ -110,10 +110,10 @@
         },
         "discord-py": {
             "hashes": [
-                "sha256:3df148daf6fbcc7ab5b11042368a3cd5f7b730b62f09fb5d3cbceff59bcfbb12"
+                "sha256:399b80d576a63fa901300e80080568e1d9cd9c21260ca622fd7145c0009278fa"
             ],
             "index": "pypi",
-            "version": "==1.6.0"
+            "version": "==1.7.1"
         },
         "google-auth": {
             "hashes": [
