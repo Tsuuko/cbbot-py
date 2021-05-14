@@ -216,11 +216,11 @@
         },
         "pdf2image": {
             "hashes": [
-                "sha256:066527e1bf954762fb4369c677ae3bc15f2ce8707eee830cccef8471fde736d7",
-                "sha256:cf1b2dc77cf3e050cb06078cd7373469c8dca93d4cea1af2a2e1bbe0ed4a8800"
+                "sha256:36dec8cb7612f067c7c652fcdbb98bca0776fe5882eea688e666309b614bca96",
+                "sha256:aa6013c1b5b25ceb90caa34834f1ed343e969cfa532100e1472cfe0e96a639b5"
             ],
             "index": "pypi",
-            "version": "==1.14.0"
+            "version": "==1.15.1"
         },
         "pillow": {
             "hashes": [
