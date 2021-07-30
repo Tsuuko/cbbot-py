@@ -82,10 +82,10 @@
         },
         "botocore": {
             "hashes": [
-                "sha256:c92dc2b69aec36b7482e5b05ac0a00d65ac972d745a74546942f09c95e68d335",
-                "sha256:cabff036f702411f47c6dae09134315e0b524c8eda6bb1de99ee75fc1ee07f7f"
+                "sha256:601f820ed340a85ed62d91b4eaeb768b9ff0529add75a074592fb7c51db7bd00",
+                "sha256:b5e9128a259fc0fe5a8c2b717f5d7e8a1321321981b5d5679939e12d4142c0f3"
             ],
-            "version": "==1.21.6"
+            "version": "==1.21.11"
         },
         "cachetools": {
             "hashes": [
@@ -110,11 +110,11 @@
         },
         "charset-normalizer": {
             "hashes": [
-                "sha256:88fce3fa5b1a84fdcb3f603d889f723d1dd89b26059d0123ca435570e848d5e1",
-                "sha256:c46c3ace2d744cfbdebceaa3c19ae691f53ae621b39fd7570f59d14fb7f2fd12"
+                "sha256:0c8911edd15d19223366a194a513099a302055a962bca2cec0f54b8b63175d8b",
+                "sha256:f23667ebe1084be45f6ae0538e4a5a865206544097e4e8bbcacf42cd02a348f3"
             ],
             "markers": "python_version >= '3'",
-            "version": "==2.0.3"
+            "version": "==2.0.4"
         },
         "discord-py": {
             "hashes": [
@@ -125,17 +125,17 @@
         },
         "google-auth": {
             "hashes": [
-                "sha256:036dd68c1e8baa422b6b61619b8e02793da2e20f55e69514612de6c080468755",
-                "sha256:7665c04f2df13cc938dc7d9066cddb1f8af62b038bc8b2306848c1b23121865f"
+                "sha256:bd6aa5916970a823e76ffb3d5c3ad3f0bedafca0a7fa53bc15149ab21cb71e05",
+                "sha256:f1094088bae046fb06f3d1a3d7df14717e8d959e9105b79c57725bd4e17597a2"
             ],
-            "version": "==1.33.1"
+            "version": "==1.34.0"
         },
         "google-auth-oauthlib": {
             "hashes": [
-                "sha256:09832c6e75032f93818edf1affe4746121d640c625a5bef9b5c96af676e98eee",
-                "sha256:0e92aacacfb94978de3b7972cf4b0f204c3cd206f74ddd0dc0b31e91164e6317"
+                "sha256:4ab58e6c3dc6ccf112f921fcced40e5426fba266768986ea502228488276eaba",
+                "sha256:b5a1ce7c617d247ccb2dfbba9d4bfc734b41096803d854a2c52592ae80150a67"
             ],
-            "version": "==0.4.4"
+            "version": "==0.4.5"
         },
         "gspread": {
             "hashes": [
@@ -520,10 +520,10 @@
         },
         "isort": {
             "hashes": [
-                "sha256:eed17b53c3e7912425579853d078a0832820f023191561fcee9d7cae424e0813",
-                "sha256:f65ce5bd4cbc6abdfbe29afc2f0245538ab358c14590912df638033f157d555e"
+                "sha256:9c2ea1e62d871267b78307fe511c0838ba0da28698c5732d54e2790bf3ba9899",
+                "sha256:e17d6e2b81095c9db0a03a8025a957f334d6ea30b26f9ec70805411e5c7c81f2"
             ],
-            "version": "==5.9.2"
+            "version": "==5.9.3"
         },
         "lazy-object-proxy": {
             "hashes": [
@@ -561,11 +561,11 @@
         },
         "pylint": {
             "hashes": [
-                "sha256:1f333dc72ef7f5ea166b3230936ebcfb1f3b722e76c980cb9fe6b9f95e8d3172",
-                "sha256:748f81e5776d6273a6619506e08f1b48ff9bcb8198366a56821cf11aac14fc87"
+                "sha256:2e1a0eb2e8ab41d6b5dbada87f066492bb1557b12b76c47c2ee8aa8a11186594",
+                "sha256:8b838c8983ee1904b2de66cce9d0b96649a91901350e956d78f289c3bc87b48e"
             ],
             "index": "pypi",
-            "version": "==2.9.5"
+            "version": "==2.9.6"
         },
         "toml": {
             "hashes": [
