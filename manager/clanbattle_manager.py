@@ -8,7 +8,8 @@ from pdf2image import convert_from_bytes
 import requests
 from io import BytesIO
 
-SPREADSHEET_URL=load_settings.SPREADSHEET_URL
+SPREADSHEET_URL = load_settings.SPREADSHEET_URL
+
 
 def fetch_status():
     """
@@ -26,7 +27,9 @@ def fetch_status():
     """
     # クラバト開催情報取得
     r = requests.get(
-        "https://redive.estertion.win/ver_log_redive/?page=1&filter=clan_battle"
+        # FIXME: Issue #122
+        # "https://redive.estertion.win/ver_log_redive/?page=1&filter=clan_battle"
+        "https://raw.githubusercontent.com/Tsuuko/cbbot-py/master/tmp/2207.json"
     ).json()
 
     # クラバト開始日取得
@@ -54,33 +57,37 @@ def get_cbday():
     None
     ```
     """
-    cb_status=fetch_status()
-    #cb_status = {
+    cb_status = fetch_status()
+    # cb_status = {
     #    'cb_start': datetime.strptime('2020/02/23 5:00:00',
     #                                  '%Y/%m/%d %H:%M:%S'),
     #    'cb_end': datetime.strptime('2020/02/28 23:59:59',
     #                                '%Y/%m/%d %H:%M:%S'),
     #    'cb_days': 6
-    #}
-    now_datetime=datetime.now()
-    #now = "2020-02-29 15:00:00"
-    #now_datetime = datetime.strptime(now, '%Y-%m-%d %H:%M:%S')
+    # }
+    now_datetime = datetime.now()
+    # now = "2020-02-29 15:00:00"
+    # now_datetime = datetime.strptime(now, '%Y-%m-%d %H:%M:%S')
     now_cbday = (now_datetime - cb_status["cb_start"]).days + 1
 
     print("現在日時：", now_datetime)
     print("開始日時：", cb_status["cb_start"])
     print("終了日時：", cb_status["cb_end"])
     print("開催期間：", cb_status["cb_days"])
-    print(cb_status['cb_days'] - now_cbday)
+    print(cb_status["cb_days"] - now_cbday)
     print(cb_status["cb_end"])
     if now_cbday <= 0:
         print(f"クラバト開催まであと{now_cbday+1}日")
-    elif (now_cbday >= 1) and (now_cbday <= cb_status["cb_days"]) and now_datetime<cb_status["cb_end"]:
+    elif (
+        (now_cbday >= 1)
+        and (now_cbday <= cb_status["cb_days"])
+        and now_datetime < cb_status["cb_end"]
+    ):
         print(f"クラバト開催中！　{now_cbday}/{cb_status['cb_days']}日目")
     else:
         print(f"クラバトは終了しています。{now_cbday-cb_status['cb_days']}日経過")
 
-    #print(now_cbday)
+    # print(now_cbday)
 
 
 def set_cbstatus(status):
@@ -107,18 +114,23 @@ def set_cbstatus(status):
     # クラバト何日目か
     now_cbday = (now_datetime - status["cb_start"]).days + 1
     # 残り何日か（最終日は0が返される）
-    remaining_days = status['cb_days'] - now_cbday
+    remaining_days = status["cb_days"] - now_cbday
 
     # 1日目以上&開催日数以下の場合（開催中）
-    #if now_cbday >= 1 and now_cbday <= status["cb_days"]:
-    if (now_cbday >= 1) and (now_cbday <= status["cb_days"]) and now_datetime<status["cb_end"]:
+    # if now_cbday >= 1 and now_cbday <= status["cb_days"]:
+    if (
+        (now_cbday >= 1)
+        and (now_cbday <= status["cb_days"])
+        and now_datetime < status["cb_end"]
+    ):
         return True, remaining_days, now_cbday
     # 最終日の5時を回った場合
-    if remaining_days==0 and now_datetime>status["cb_end"]:
-        return False, remaining_days-1, now_cbday-1
+    if remaining_days == 0 and now_datetime > status["cb_end"]:
+        return False, remaining_days - 1, now_cbday - 1
     # それ以外（非開催中）
     else:
         return False, remaining_days, now_cbday
+
 
 def shot_capture():
     """
@@ -131,7 +143,8 @@ def shot_capture():
     ```
     """
     r = requests.get(
-        SPREADSHEET_URL+"export?format=pdf&size=executive&portrait=false&scale=4&top_margin=0.10&bottom_margin=0.00&left_margin=0.10&right_margin=0.00&horizontal_alignment=CENTER&vertical_alignment=MIDDLE"
+        SPREADSHEET_URL
+        + "export?format=pdf&size=executive&portrait=false&scale=4&top_margin=0.10&bottom_margin=0.00&left_margin=0.10&right_margin=0.00&horizontal_alignment=CENTER&vertical_alignment=MIDDLE"
     )
     images = convert_from_bytes(r.content)
     f = BytesIO()
@@ -139,8 +152,9 @@ def shot_capture():
     f.seek(0)
     return f
 
+
 ### あきらめた
-#def is_need_send_last_day_notification(remaining_days:int,notification_hour:list):
+# def is_need_send_last_day_notification(remaining_days:int,notification_hour:list):
 #    """
 #    notification_hourで指定した時間の場合にembedを返す。
 #    それ以外はNoneを返す。
@@ -164,11 +178,8 @@ def shot_capture():
 #    now_datetime = datetime.now()
 
 
-
-
-
 class spreadsheet:
-    #def __init__(self):
+    # def __init__(self):
     #    self._authorize()
 
     def _authorize(self):
@@ -190,11 +201,12 @@ class spreadsheet:
         """
         scope = [
             "https://spreadsheets.google.com/feeds",
-            "https://www.googleapis.com/auth/drive"
+            "https://www.googleapis.com/auth/drive",
         ]
         credential = load_settings.SHEETS_CREDENTIAL
         credentials = ServiceAccountCredentials.from_json_keyfile_dict(
-            credential, scope)
+            credential, scope
+        )
         gc = gspread.authorize(credentials)
         self.sheet = gc.open_by_url(load_settings.SPREADSHEET_URL)
 
@@ -214,7 +226,7 @@ class spreadsheet:
         """
         ws = self.sheet.worksheet("main")
         result = ws.range(2, 1, ws.row_count, 1)
-        #result=ws.findall(username)
+        # result=ws.findall(username)
         count = len([i.value for i in result if i.value == username])
         if count == 0:
             return False
@@ -240,12 +252,24 @@ class spreadsheet:
         if not self._chk_registered_user(username):
             ws = self.sheet.worksheet("main")
             cell_range = f"B{ws.row_count+1}:K{ws.row_count+1}"
-            result = ws.append_row([
-                username, '', '', '', '', '', '', '', '', '', '',
-                f'=COUNTIF({cell_range},"3凸")+COUNTIF({cell_range},"2凸")+COUNTIF({cell_range},"1凸")+COUNTIF({cell_range},"報忘")',
-                f'=COUNTIF({cell_range},"報忘")'
-            ],
-                                   value_input_option='USER_ENTERED')
+            result = ws.append_row(
+                [
+                    username,
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    f'=COUNTIF({cell_range},"3凸")+COUNTIF({cell_range},"2凸")+COUNTIF({cell_range},"1凸")+COUNTIF({cell_range},"報忘")',
+                    f'=COUNTIF({cell_range},"報忘")',
+                ],
+                value_input_option="USER_ENTERED",
+            )
             print("add_user", result)
             return result["updates"]["updatedColumns"]
         else:
@@ -305,8 +329,9 @@ class spreadsheet:
             result = ws.range(2, 1, ws.row_count, 1)
             user_list = [i for i in result if i.value == username]
             if len(user_list) == 1:
-                result = ws.update_cell(user_list[0].row, cbday + 1,
-                                        ["", "1凸", "2凸", "3凸"][count])
+                result = ws.update_cell(
+                    user_list[0].row, cbday + 1, ["", "1凸", "2凸", "3凸"][count]
+                )
                 print("set_attack", result)
 
             else:
@@ -330,9 +355,6 @@ class spreadsheet:
         self.sheet.values_clear(f"{ws.title}!B2:K{ws.row_count}")
         # メモ欄1を削除
         self.sheet.values_clear(f"{ws.title}!N2:N{ws.row_count}")
-
-
-
 
 
 if __name__ == "__main__":
