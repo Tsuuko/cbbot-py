@@ -28,7 +28,8 @@ def fetch_status():
     # クラバト開催情報取得
     r = requests.get(
         # FIXME: Issue #122
-        "https://redive.estertion.win/ver_log_redive/?page=1&filter=clan_battle"
+        # "https://redive.estertion.win/ver_log_redive/?page=1&filter=clan_battle"
+        "https://raw.githubusercontent.com/Tsuuko/cbbot-py/master/tmp/cb_schdule_stub.json"
     ).json()
 
     # クラバト開始日取得
