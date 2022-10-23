@@ -4,15 +4,6 @@
 
 import os
 
-# ローカルデバッグ用
-# heroku以外で実行する場合は.env.developmentファイルから環境変数を読み取る
-if os.environ.get("DYNO") is None:
-    from dotenv import load_dotenv
-    from os.path import join, dirname
-    #load_dotenv(verbose=True,encoding="utf8")
-    dotenv_path = join(dirname(__file__), '.env.development')
-    load_dotenv(dotenv_path, encoding="utf8")
-
 # DiscordBOTのトークン読み取り
 DISCORD_BOT_TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
 
