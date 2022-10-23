@@ -29,7 +29,7 @@ def fetch_status():
     r = requests.get(
         # FIXME: Issue #122
         # "https://redive.estertion.win/ver_log_redive/?page=1&filter=clan_battle"
-        "https://raw.githubusercontent.com/Tsuuko/cbbot-py/master/tmp/cb_schdule_stub.json"
+        "https://raw.githubusercontent.com/Tsuuko/cbbot-py/master/tmp/cb_schedule_stub.json"
     ).json()
 
     # クラバト開始日取得
