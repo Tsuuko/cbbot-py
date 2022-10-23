@@ -16,10 +16,11 @@ if os.environ.get("DYNO") is None:
 # DiscordBOTのトークン読み取り
 DISCORD_BOT_TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
 
-# cloudcubeの接続情報読み取り
-CLOUDCUBE_ACCESS_KEY_ID = os.environ.get("CLOUDCUBE_ACCESS_KEY_ID")
-CLOUDCUBE_SECRET_ACCESS_KEY = os.environ.get("CLOUDCUBE_SECRET_ACCESS_KEY")
-CLOUDCUBE_URL = os.environ.get("CLOUDCUBE_URL")
+# S3の接続情報読み取り
+S3_ENDPOINT = os.environ.get("S3_ENDPOINT")
+S3_ACCESS_KEY_ID = os.environ.get("S3_ACCESS_KEY_ID")
+S3_SECRET_ACCESS_KEY = os.environ.get("S3_SECRET_ACCESS_KEY")
+S3_BUCKET_NAME = os.environ.get("S3_BUCKET_NAME")
 
 # mongoDBの接続情報読み取り
 MONGODB_URI = os.environ.get("MONGODB_URI")

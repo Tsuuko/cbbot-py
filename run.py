@@ -4,9 +4,7 @@ import requests
 from bot_command import *
 import load_settings
 #import db_manager       # mmongoDBを使用する場合
-from manager import s3_manager  # cloudcubeを使用する場合
-from manager import clanbattle_manager
-from manager.channel_manager import send_embed_message,send_error_message
+from manager import s3_manager  # S3を使用する場合
 
 
 
@@ -22,11 +20,11 @@ MEMBER_NOTIFICATION_CHANNEL_ID = load_settings.MEMBER_NOTIFICATION_CHANNEL_ID
 #prefix=db_manager.get_prefix()
 ##
 
-## cloudcubeを使用する場合
+## S3を使用する場合
 try:
     prefix = s3_manager.load_text("prefix")
 except:
-    print("cloudcubeからのprefixの取得に失敗しました。")
+    print("S3からのprefixの取得に失敗しました。")
     prefix = "!"
 ##
 
