@@ -11,7 +11,7 @@ S3_ENDPOINT = load_settings.S3_ENDPOINT
 S3_ACCESS_KEY_ID = load_settings.S3_ACCESS_KEY_ID
 S3_SECRET_ACCESS_KEY = load_settings.S3_SECRET_ACCESS_KEY
 S3_BUCKET_NAME = load_settings.S3_BUCKET_NAME
-PATH = "cbbot_settings2/"
+PATH = "cbbot_settings/"
 
 
 def set_bucket():
