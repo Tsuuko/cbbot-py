@@ -99,7 +99,7 @@ class channel(commands.Cog):
             if len(args) != 1:
                 msg = "プレフィックスは\"\"で囲んで設定してください。"
 
-            ## cloudcubeを使用する場合
+            ## S3を使用する場合
             else:
                 s3_manager.save_text(args[0], "prefix")
                 self.bot.command_prefix = args[0]

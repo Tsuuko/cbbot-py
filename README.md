@@ -101,7 +101,7 @@ Prefixは`!`として説明します。適宜読み替えてください
   - スプレッドシートのキャプチャ画像を送信する
 
 
-
+<!-- 
 ## 設定
 
 herokuで動かすことを前提としています。
@@ -123,8 +123,8 @@ Heroku CLIを予めインストールしておいてください。
 アプリ作成後に追加してください。
 
 - heroku-buildpack-python <https://elements.heroku.com/buildpacks/heroku/heroku-buildpack-python>
-- heroku-buildpack-apt <https://elements.heroku.com/buildpacks/heroku/heroku-buildpack-apt>
-
+- heroku-buildpack-apt <https://elements.heroku.com/buildpacks/heroku/heroku-buildpack-apt> -->
+<!-- 
 ### 環境変数
 
 1. `.env.example`ファイルの内容を編集後、`.env`にリネーム。
@@ -143,9 +143,9 @@ Heroku CLIを予めインストールしておいてください。
    Successfully wrote settings to Heroku!
    ```
 
-参考：<https://qiita.com/MosamosaPoodle/items/6e3b64feb22153fd33b8>
+参考：<https://qiita.com/MosamosaPoodle/items/6e3b64feb22153fd33b8> -->
 
-
+<!-- 
 ### timezone
 
 タイムゾーンをUTCからJSTに変更する必要があります。
@@ -156,4 +156,4 @@ Setting TZ and restarting ⬢ cbbot-py... done, v15
 TZ: Asia/Tokyo
 ```
 
-参考：<https://qiita.com/Horie1024/items/85688099707610f70fa6>
+参考：<https://qiita.com/Horie1024/items/85688099707610f70fa6> -->
