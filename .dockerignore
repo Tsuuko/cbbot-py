@@ -2,4 +2,4 @@
 **/.vscode
 **/.venv
 **/.git
-**/__*
+**/__pycache__
