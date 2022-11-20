@@ -1,17 +1,18 @@
 {
+  "original_url": "https://redive.estertion.win/ver_log_redive/?page=1&filter=clan_battle",
   "page": 1,
   "pages": 4,
   "data": [
     {
-      "hash": "1b2d923b6e37882fa685e008fd1b536dc515e876",
-      "ver": "10041700",
-      "time": 1663815651,
-      "timeStr": "2022-09-22 12:00",
+      "hash": "1c5503446d6290a740b0d38d824c02e48b2fcbfc",
+      "ver": "10042300",
+      "time": 1666321251,
+      "timeStr": "2022-10-21 12:00",
       "clan_battle": [
         {
-          "id": "1056",
-          "start": "2022/10/26 5:00:00",
-          "end": "2022/10/30 23:59:59"
+          "id": "1057",
+          "start": "2022/11/25 5:00:00",
+          "end": "2022/11/29 23:59:59"
         }
       ]
     }
