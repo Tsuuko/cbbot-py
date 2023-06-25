@@ -2,13 +2,18 @@
 # チャンネル管理関係のコマンド #
 ##############################
 
+import discord
 from discord.ext import commands
+
+import load_settings
 
 # import db_manager
 from manager import s3_manager
-import load_settings
-import discord
-from manager.channel_manager import *
+from manager.channel_manager import (
+    is_have_botmanager_role,
+    send_botmanager_role_error,
+    send_embed_message,
+)
 
 # メンバー入退室を通知するチャンネルID
 MEMBER_NOTIFICATION_CHANNEL_ID = load_settings.MEMBER_NOTIFICATION_CHANNEL_ID

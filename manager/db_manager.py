@@ -20,7 +20,7 @@ def init_data():
     """
     collection = db["settings"]
     result = collection.find_one({"item": "prefix"})
-    if result == None:
+    if result is None:
         collection.create_index("item", unique=True)
         data = {"item": "prefix", "data": "!"}
         collection.insert_one(data)

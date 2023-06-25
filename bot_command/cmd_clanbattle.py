@@ -2,14 +2,23 @@
 # クランバトル関係のコマンド #
 ###########################
 
-from discord.ext import commands, tasks
-from datetime import datetime
-import discord
-from manager import clanbattle_manager
-import load_settings
 import traceback
-from manager.channel_manager import *
 
+import discord
+from discord.ext import commands, tasks
+
+import load_settings
+from manager import clanbattle_manager
+from manager.channel_manager import (
+    clear_attackrole,
+    is_have_botmanager_role,
+    reset_attackrole,
+    send_botmanager_role_error,
+    send_embed_message,
+    send_error_message,
+    set_role,
+    unset_role,
+)
 
 CB_NOTIFICATION_CHANNEL_ID = load_settings.CB_NOTIFICATION_CHANNEL_ID
 BOT_COMMAND_CHANNEL = load_settings.BOT_COMMAND_CHANNEL
@@ -371,7 +380,7 @@ class clanbattle(commands.Cog):
                     await send_error_message(
                         self.bot, msg, plain_text=ctx.author.mention, ctx=ctx
                     )
-            except:
+            except:  # noqa: E722
                 msg = traceback.format_exc()
                 await send_error_message(
                     self.bot, msg, plain_text=ctx.author.mention, ctx=ctx
@@ -498,7 +507,7 @@ class clanbattle(commands.Cog):
         # BOT_MANAGER_ROLEチェック
         if is_have_botmanager_role(ctx.author):
             try:
-                f = self.sheet.clear_all_attack()
+                self.sheet.clear_all_attack()
                 embed = discord.Embed(
                     title="✅ 実行完了", description="凸管理シートをクリアしました。", color=0x00FF00
                 )
@@ -541,7 +550,7 @@ class clanbattle(commands.Cog):
         self.status = clanbattle_manager.fetch_status()
 
     @tasks.loop(seconds=10.0)
-    async def set_cbstatus(self):
+    async def set_cbstatus(self):  # noqa: C901
         """
         10秒毎にクランバトル開催情報を設定する。
         """
@@ -613,7 +622,7 @@ class clanbattle(commands.Cog):
                 channel = self.bot.get_channel(CB_NOTIFICATION_CHANNEL_ID)
 
                 # 非開催中->開催中
-                if (self.cb_is_open == False) and (cb_is_open == True):
+                if (self.cb_is_open is False) and (cb_is_open is True):
                     self.cb_is_open = cb_is_open
                     self.cb_remaining_days = cb_remaining_days
 
@@ -627,7 +636,7 @@ class clanbattle(commands.Cog):
                         # クラバト最終日以外
                         if self.cb_remaining_days == 0:
                             msg_list.append(
-                                f"クランバトル最終日です！\n本日23時59分までの開催のため、深夜勢はお気をつけください！"
+                                "クランバトル最終日です！\n本日23時59分までの開催のため、深夜勢はお気をつけください！"
                             )
                             print(
                                 f"定期実行: set_cbstatus: 初回起動_クラバト最終日以外: is_open={self.cb_is_open}, remaining_days={self.cb_remaining_days}, now_cbday={self.now_cbday}"

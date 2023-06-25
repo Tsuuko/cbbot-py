@@ -1,7 +1,6 @@
 from datetime import datetime
 from io import BytesIO
 
-import discord
 import gspread
 import requests
 from oauth2client.service_account import ServiceAccountCredentials

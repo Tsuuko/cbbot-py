@@ -1,9 +1,8 @@
 import discord
-import requests
-from discord.ext import commands, tasks
+from discord.ext import commands
 
 import load_settings
-from bot_command import *
+from bot_command import channel, clanbattle
 
 # import db_manager       # mmongoDBを使用する場合
 from manager import s3_manager  # S3を使用する場合
@@ -23,7 +22,7 @@ MEMBER_NOTIFICATION_CHANNEL_ID = load_settings.MEMBER_NOTIFICATION_CHANNEL_ID
 ## S3を使用する場合
 try:
     prefix = s3_manager.load_text("prefix")
-except:
+except:  # noqa: E722
     print("S3からのprefixの取得に失敗しました。")
     prefix = "!"
 ##
