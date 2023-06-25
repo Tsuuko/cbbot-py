@@ -1,3 +1,5 @@
+import re
+
 import discord
 
 import load_settings
@@ -345,3 +347,17 @@ async def clear_attackrole(guild):
             if not member.bot:
                 await member.remove_roles(no_attack_role)
                 await member.remove_roles(attacked_role)
+
+
+async def get_user_by_id(bot: discord.ext.commands.Bot, user_id: int) -> discord.User:
+    return discord.utils.get(bot.get_all_members(), id=user_id)
+
+
+def parse_mention_user_id(mention):
+    if mention is None:
+        return (False, None)
+    match = re.match("<@(\d{18})>", mention)
+    if match:
+        return (True, int(match.group(1)))
+    else:
+        return (False, None)
