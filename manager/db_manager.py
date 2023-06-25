@@ -2,8 +2,10 @@
 # mongoDB操作
 ##
 
-from pymongo import MongoClient
 from urllib.parse import urlparse
+
+from pymongo import MongoClient
+
 import load_settings
 
 MONGODB_URI = load_settings.MONGODB_URI
@@ -41,11 +43,9 @@ def set_prefix(prefix):
     DBにprefixを保存
     """
     collection = db["settings"]
-    collection.update_one({"item": "prefix"},
-                          {"$set": {
-                              "item": "prefix",
-                              "data": prefix
-                          }})
+    collection.update_one(
+        {"item": "prefix"}, {"$set": {"item": "prefix", "data": prefix}}
+    )
     if get_prefix() == prefix:
         return True
     else:
@@ -53,7 +53,7 @@ def set_prefix(prefix):
 
 
 if __name__ == "__main__":
-    #init()
+    # init()
     print(get_prefix())
     a = set_prefix("!")
     print(a)

@@ -1,12 +1,12 @@
 import discord
-from discord.ext import commands, tasks
 import requests
-from bot_command import *
+from discord.ext import commands, tasks
+
 import load_settings
-#import db_manager       # mmongoDBを使用する場合
+from bot_command import *
+
+# import db_manager       # mmongoDBを使用する場合
 from manager import s3_manager  # S3を使用する場合
-
-
 
 # アクセストークン
 TOKEN = load_settings.DISCORD_BOT_TOKEN
@@ -16,8 +16,8 @@ MEMBER_NOTIFICATION_CHANNEL_ID = load_settings.MEMBER_NOTIFICATION_CHANNEL_ID
 
 # prefixをとってくる（再起動時にもデータを保持するため）
 ## mongoDBを使用する場合
-#db_manager.init_data()
-#prefix=db_manager.get_prefix()
+# db_manager.init_data()
+# prefix=db_manager.get_prefix()
 ##
 
 ## S3を使用する場合
@@ -32,14 +32,14 @@ except:
 intents: discord.Intents = discord.Intents.default()
 intents.members = True
 
-bot = commands.Bot(command_prefix=prefix,intents=intents)
+bot = commands.Bot(command_prefix=prefix, intents=intents)
 
 
 @bot.event
 async def on_ready():
     # リッチプレセンス（～をプレイ中）を設定
     await bot.change_presence(activity=discord.Game("プリコネR"))
-    #for guild in bot.guilds:
+    # for guild in bot.guilds:
     #    channel=guild.system_channel
     #    embed = discord.Embed(
     #        title="ℹ BOTが起動しました",
@@ -47,7 +47,7 @@ async def on_ready():
     #    await send_embed_message(bot,embed,channel=channel)
 
     # 起動したらターミナルにログイン通知が表示される
-    print('ログインしました')
+    print("ログインしました")
     print(f"Current prefix is '{prefix}'")
 
 
