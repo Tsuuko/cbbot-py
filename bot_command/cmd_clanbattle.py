@@ -690,4 +690,4 @@ class clanbattle(commands.Cog):
                         name="⚠ Error", value="\n".join(error_msg_list), inline=False
                     )
 
-                # await send_embed_message(self.bot, embed, channel=channel)
+                await send_embed_message(self.bot, embed, channel=channel)
