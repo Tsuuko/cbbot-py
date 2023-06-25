@@ -1,6 +1,7 @@
 from datetime import datetime
 from io import BytesIO
 
+import discord
 import gspread
 import requests
 from oauth2client.service_account import ServiceAccountCredentials
@@ -210,7 +211,7 @@ class spreadsheet:
         gc = gspread.authorize(credentials)
         self.sheet = gc.open_by_url(load_settings.SPREADSHEET_URL)
 
-    def _chk_registered_user(self, username):
+    def _chk_registered_user(self, user_id):
         """
         ユーザーがスプレッドシートに登録されているか確認する。
 
@@ -227,13 +228,13 @@ class spreadsheet:
         ws = self.sheet.worksheet("main")
         result = ws.range(2, 1, ws.row_count, 1)
         # result=ws.findall(username)
-        count = len([i.value for i in result if i.value == username])
+        count = len([i.value for i in result if i.value == str(user_id)])
         if count == 0:
             return False
         else:
             return True
 
-    def add_user(self, username):
+    def add_user(self, user: discord.User):
         """
         ユーザーをスプレッドシートに登録する。
 
@@ -249,12 +250,13 @@ class spreadsheet:
         ```
         """
         self._authorize()
-        if not self._chk_registered_user(username):
+        if not self._chk_registered_user(user.id):
             ws = self.sheet.worksheet("main")
             cell_range = f"B{ws.row_count+1}:K{ws.row_count+1}"
             result = ws.append_row(
                 [
-                    username,
+                    f"'{user.id}",
+                    user.display_name,
                     "",
                     "",
                     "",
@@ -275,7 +277,7 @@ class spreadsheet:
         else:
             raise Exception("ユーザーはすでに存在します。")
 
-    def delete_user(self, username):
+    def delete_user(self, user_id):
         """
         ユーザーをスプレッドシートから削除する。
 
@@ -292,10 +294,10 @@ class spreadsheet:
         ```
         """
         self._authorize()
-        if self._chk_registered_user(username):
+        if self._chk_registered_user(user_id):
             ws = self.sheet.worksheet("main")
             result = ws.range(2, 1, ws.row_count, 1)
-            user_list = [i for i in result if i.value == username]
+            user_list = [i for i in result if i.value == str(user_id)]
             if len(user_list) == 1:
                 result = ws.delete_row(user_list[0].row)
                 print("delete_user", result)
@@ -305,14 +307,14 @@ class spreadsheet:
         else:
             raise Exception("ユーザーが存在しません。")
 
-    def set_attack(self, username, count, cbday):
+    def set_attack(self, user: discord.User, count, cbday):
         """
         凸登録する。
 
         params
         ----
         ```
-        username:str # 登録するユーザー名
+        user:discord.User # 登録するユーザー名
         count:int # 凸回数
         cbday:int # クラバト何日目か
         ```
@@ -324,13 +326,13 @@ class spreadsheet:
         ```
         """
         self._authorize()
-        if self._chk_registered_user(username):
+        if self._chk_registered_user(user.id):
             ws = self.sheet.worksheet("main")
             result = ws.range(2, 1, ws.row_count, 1)
-            user_list = [i for i in result if i.value == username]
+            user_list = [i for i in result if i.value == str(user.id)]
             if len(user_list) == 1:
                 result = ws.update_cell(
-                    user_list[0].row, cbday + 1, ["", "1凸", "2凸", "3凸"][count]
+                    user_list[0].row, cbday + 2, ["", "1凸", "2凸", "3凸"][count]
                 )
                 print("set_attack", result)
 

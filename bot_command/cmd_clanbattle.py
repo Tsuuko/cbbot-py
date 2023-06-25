@@ -11,7 +11,9 @@ import load_settings
 from manager import clanbattle_manager
 from manager.channel_manager import (
     clear_attackrole,
+    get_user_by_id,
     is_have_botmanager_role,
+    parse_mention_user_id,
     reset_attackrole,
     send_botmanager_role_error,
     send_embed_message,
@@ -37,7 +39,7 @@ class clanbattle(commands.Cog):
         self.set_cbstatus.start()
 
     @commands.Cog.listener()
-    async def on_message(self, message):
+    async def on_message(self, message: discord.Message):
         # チャンネルがBOTコマンドチャンネルの場合
         if message.channel.id == BOT_COMMAND_CHANNEL:
             # 凸登録用絵文字が押された場合に凸登録＆ロール付け替え
@@ -51,17 +53,21 @@ class clanbattle(commands.Cog):
                 or message.content.startswith("<:attack1:")
             ):
                 if self.cb_is_open is True:
-                    username = message.author.display_name
-
+                    if message.content.startswith("<:attack3:"):
+                        attack_count = 3
+                    elif message.content.startswith("<:attack2:"):
+                        attack_count = 2
+                    elif message.content.startswith("<:attack1:"):
+                        attack_count = 1
                     # 3凸報告
                     if message.content.startswith("<:attack3:"):
                         try:
                             self.sheet.set_attack(
-                                message.author.display_name, 3, self.now_cbday
+                                message.author, attack_count, self.now_cbday
                             )
                             embed = discord.Embed(
                                 title="✅ 登録完了",
-                                description=f"**{username}** さんを3凸登録しました。",
+                                description=f"**{message.author.display_name}** さんを{attack_count}凸登録しました。",
                                 color=0x00FF00,
                             )
                             await send_embed_message(
@@ -73,53 +79,6 @@ class clanbattle(commands.Cog):
                         except Exception as e:
                             msg = str(e)
                             await send_error_message(self.bot, msg, message=message)
-
-                    # 2凸報告
-                    elif message.content.startswith("<:attack2:"):
-                        try:
-                            self.sheet.set_attack(
-                                message.author.display_name, 2, self.now_cbday
-                            )
-                            embed = discord.Embed(
-                                title="✅ 登録完了",
-                                description=f"**{username}** さんを2凸登録しました。",
-                                color=0x00FF00,
-                            )
-                            await send_embed_message(
-                                self.bot,
-                                embed,
-                                plain_text=message.author.mention,
-                                message=message,
-                            )
-                        except Exception as e:
-                            msg = str(e)
-                            await send_error_message(self.bot, msg, message=message)
-
-                    # 1凸報告
-                    elif message.content.startswith("<:attack1:"):
-                        try:
-                            self.sheet.set_attack(
-                                message.author.display_name, 1, self.now_cbday
-                            )
-                            embed = discord.Embed(
-                                title="✅ 登録完了",
-                                description=f"**{username}** さんを1凸登録しました。",
-                                color=0x00FF00,
-                            )
-                            await send_embed_message(
-                                self.bot,
-                                embed,
-                                plain_text=message.author.mention,
-                                message=message,
-                            )
-                        except Exception as e:
-                            msg = str(e)
-                            await send_error_message(
-                                self.bot,
-                                msg,
-                                plain_text=message.author.mention,
-                                message=message,
-                            )
 
                     # ロール付け替え
                     await set_role(self.bot, "凸報告済", message=message)
@@ -133,8 +92,15 @@ class clanbattle(commands.Cog):
     # BOTコマンドが送信されたときに実行される #
     ########################################
 
+    @commands.command(name="tes")
+    async def cmd_tes(self, ctx, user: discord.Member):
+        print(user.id)
+        # await ctx.send(
+        #     f"{ctx.author.mention} {str([v.display_name for v in ctx.guild.members])}"
+        # )
+
     @commands.command(name="regist")
-    async def cmd_regist(self, ctx, *args):
+    async def cmd_regist(self, ctx: commands.Context, *args):
         """
         スプレッドシートにユーザーを登録する。 ★ユーザー指定はBOT_MANAGER_ROLE限定
 
@@ -144,10 +110,13 @@ class clanbattle(commands.Cog):
         - ユーザー指定: `{prefix}regist -u {username}`
         """
         # チャンネルがBOTコマンドチャンネルの場合
+        (is_mention, user_id) = parse_mention_user_id(
+            args[0] if len(args) == 1 else None
+        )
         if ctx.message.channel.id == BOT_COMMAND_CHANNEL:
             if len(args) == 0:
                 try:
-                    self.sheet.add_user(ctx.author.display_name)
+                    self.sheet.add_user(ctx.author)
                     embed = discord.Embed(
                         title="✅ 登録完了",
                         description=f"**{ctx.author.display_name}** さんを登録しました。",
@@ -160,14 +129,15 @@ class clanbattle(commands.Cog):
                     msg = str(e)
                     await send_error_message(self.bot, msg, ctx=ctx)
 
-            elif len(args) == 2 and args[0] == "-u":
+            elif len(args) == 1 and is_mention:
+                user = await get_user_by_id(self.bot, user_id)
                 # BOT_MANAGER_ROLEチェック
                 if is_have_botmanager_role(ctx.author):
                     try:
-                        self.sheet.add_user(args[1])
+                        self.sheet.add_user(user)
                         embed = discord.Embed(
                             title="✅ 登録完了",
-                            description=f"**{args[1]}** さんを登録しました。",
+                            description=f"**{user.display_name}** さんを登録しました。",
                             color=0x00FF00,
                         )
                         await send_embed_message(
@@ -202,31 +172,34 @@ class clanbattle(commands.Cog):
         """
         # チャンネルがBOTコマンドチャンネルの場合
         if ctx.message.channel.id == BOT_COMMAND_CHANNEL:
-            if len(args) == 1 and args[0] == "me":
-                try:
-                    self.sheet.delete_user(ctx.author.display_name)
-                    embed = discord.Embed(
-                        title="✅ 削除完了",
-                        description=f"**{ctx.author.display_name}** さんを削除しました。",
-                        color=0x00FF00,
-                    )
-                    await send_embed_message(
-                        self.bot, embed, plain_text=ctx.author.mention, ctx=ctx
-                    )
-                except Exception as e:
-                    msg = str(e)
-                    await send_error_message(
-                        self.bot, msg, plain_text=ctx.author.mention, ctx=ctx
-                    )
-
-            elif len(args) == 2 and args[0] == "-u":
-                # BOT_MANAGER_ROLEチェック
-                if is_have_botmanager_role(ctx.author):
+            print(args)
+            (is_mention, user_id) = parse_mention_user_id(args[0])
+            if is_mention:
+                if user_id == ctx.author.id:
                     try:
-                        self.sheet.delete_user(args[1])
+                        self.sheet.delete_user(user_id)
                         embed = discord.Embed(
                             title="✅ 削除完了",
-                            description=f"**{args[1]}** さんを削除しました。",
+                            description=f"**{ctx.author.display_name}** さんを削除しました。",
+                            color=0x00FF00,
+                        )
+                        await send_embed_message(
+                            self.bot, embed, plain_text=ctx.author.mention, ctx=ctx
+                        )
+                    except Exception as e:
+                        msg = str(e)
+                        await send_error_message(
+                            self.bot, msg, plain_text=ctx.author.mention, ctx=ctx
+                        )
+
+                # BOT_MANAGER_ROLEチェック
+                elif is_have_botmanager_role(ctx.author):
+                    try:
+                        user = await get_user_by_id(self.bot, user_id)
+                        self.sheet.delete_user(user.id)
+                        embed = discord.Embed(
+                            title="✅ 削除完了",
+                            description=f"**{user.display_name}** さんを削除しました。",
                             color=0x00FF00,
                         )
                         await send_embed_message(
@@ -251,7 +224,7 @@ class clanbattle(commands.Cog):
                 )
 
     @commands.command(name="attack")
-    async def cmd_attack(self, ctx, *args):
+    async def cmd_attack(self, ctx: commands.Context, *args):
         """
         凸登録をする。 ★ユーザー指定はBOT_MANAGER_ROLE限定
 
@@ -266,13 +239,12 @@ class clanbattle(commands.Cog):
             try:
                 if self.cb_is_open is True:
                     if len(args) == 1 and args[0].isdecimal():
-                        username = ctx.message.author.display_name
                         attack_count = int(args[0])
                         text = ["0凸", "1凸", "2凸", "3凸"]
                         if (attack_count <= 3) and (attack_count >= 0):
                             try:
                                 self.sheet.set_attack(
-                                    username, attack_count, self.now_cbday
+                                    ctx.author, attack_count, self.now_cbday
                                 )
                             except Exception as e:
                                 msg = str(e)
@@ -293,7 +265,7 @@ class clanbattle(commands.Cog):
 
                             embed = discord.Embed(
                                 title="✅ 登録完了",
-                                description=f"**{username}** さんを{text[attack_count]}登録しました。",
+                                description=f"**{ctx.author.display_name}** さんを{text[attack_count]}登録しました。",
                                 color=0x00FF00,
                             )
                             await send_embed_message(
@@ -309,21 +281,22 @@ class clanbattle(commands.Cog):
                                 self.bot, msg, plain_text=ctx.author.mention, ctx=ctx
                             )
 
-                    elif len(args) == 3:
+                    elif len(args) == 2:
                         # BOT_MANAGER_ROLEチェック
                         if is_have_botmanager_role(ctx.author):
-                            if args[0] == "-u" and args[2].isdecimal():
-                                username = args[1]
-                                attack_count = int(args[2])
+                            (is_mention, user_id) = parse_mention_user_id(args[0])
+                            if is_mention and args[1].isdecimal():
+                                user = await get_user_by_id(self.bot, user_id)
+                                attack_count = int(args[1])
                                 text = ["0凸", "1凸", "2凸", "3凸"]
 
                                 if (attack_count <= 3) and (attack_count >= 0):
                                     self.sheet.set_attack(
-                                        username, attack_count, self.now_cbday
+                                        user, attack_count, self.now_cbday
                                     )
                                     embed = discord.Embed(
                                         title="✅ 登録完了",
-                                        description=f"**{username}** さんを{text[attack_count]}登録しました。",
+                                        description=f"**{user.display_name}** さんを{text[attack_count]}登録しました。",
                                         color=0x00FF00,
                                     )
                                     await send_embed_message(
@@ -717,4 +690,4 @@ class clanbattle(commands.Cog):
                         name="⚠ Error", value="\n".join(error_msg_list), inline=False
                     )
 
-                await send_embed_message(self.bot, embed, channel=channel)
+                # await send_embed_message(self.bot, embed, channel=channel)
