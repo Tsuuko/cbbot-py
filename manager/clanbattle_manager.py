@@ -1,12 +1,12 @@
-import requests
 from datetime import datetime
-import load_settings
+from io import BytesIO
+
 import gspread
-import discord
+import requests
 from oauth2client.service_account import ServiceAccountCredentials
 from pdf2image import convert_from_bytes
-import requests
-from io import BytesIO
+
+import load_settings
 
 SPREADSHEET_URL = load_settings.SPREADSHEET_URL
 

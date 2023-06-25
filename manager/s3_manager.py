@@ -2,9 +2,11 @@
 # S3操作
 ##
 
-import boto3
-import pickle
 import io
+import pickle
+
+import boto3
+
 import load_settings
 
 S3_ENDPOINT = load_settings.S3_ENDPOINT
@@ -18,11 +20,12 @@ def set_bucket():
     """
     s3Bucketを設定
     """
-    s3 = boto3.resource('s3',
-                        endpoint_url=S3_ENDPOINT,
-                        aws_access_key_id=S3_ACCESS_KEY_ID,
-                        aws_secret_access_key=S3_SECRET_ACCESS_KEY
-                        )
+    s3 = boto3.resource(
+        "s3",
+        endpoint_url=S3_ENDPOINT,
+        aws_access_key_id=S3_ACCESS_KEY_ID,
+        aws_secret_access_key=S3_SECRET_ACCESS_KEY,
+    )
     bucket = s3.Bucket(S3_BUCKET_NAME)
     return bucket
 

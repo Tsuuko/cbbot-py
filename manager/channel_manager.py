@@ -1,6 +1,7 @@
 import discord
-from discord.ext import commands, tasks
+
 import load_settings
+
 BOT_MANAGER_ROLE = load_settings.BOT_MANAGER_ROLE
 
 
@@ -25,7 +26,9 @@ def is_have_botmanager_role(author):
         False
 
 
-async def send_embed_message(bot, embed,plain_text=None, ctx=None, message=None, channel=None):
+async def send_embed_message(
+    bot, embed, plain_text=None, ctx=None, message=None, channel=None
+):
     """
     成功メッセージを送信する。
 
@@ -58,40 +61,37 @@ async def send_embed_message(bot, embed,plain_text=None, ctx=None, message=None,
     None
     ```
     """
-    if [ctx,message,channel].count(None)<2:
-        print([ctx,message,channel].count(None))
+    if [ctx, message, channel].count(None) < 2:
+        print([ctx, message, channel].count(None))
         raise Exception("パラメータが複数指定されています。")
 
     elif ctx is not None:
-        embed.set_footer(text=bot.user.display_name,
-                         icon_url=bot.user.avatar_url)
+        embed.set_footer(text=bot.user.display_name, icon_url=bot.user.avatar_url)
         embed.set_author(name=ctx.message.content)
         if plain_text is not None:
-            await ctx.send(plain_text,embed=embed)
+            await ctx.send(plain_text, embed=embed)
         else:
             await ctx.send(embed=embed)
 
     elif message is not None:
-        embed.set_footer(text=bot.user.display_name,
-                         icon_url=bot.user.avatar_url)
+        embed.set_footer(text=bot.user.display_name, icon_url=bot.user.avatar_url)
         embed.set_author(name=message.content)
         if plain_text is not None:
-            await message.channel.send(plain_text,embed=embed)
+            await message.channel.send(plain_text, embed=embed)
         else:
             await message.channel.send(embed=embed)
 
     elif channel is not None:
-        embed.set_footer(text=bot.user.display_name,
-                         icon_url=bot.user.avatar_url)
+        embed.set_footer(text=bot.user.display_name, icon_url=bot.user.avatar_url)
         if plain_text is not None:
-            await channel.send(plain_text,embed=embed)
+            await channel.send(plain_text, embed=embed)
         else:
             await channel.send(embed=embed)
     else:
         raise Exception("パラメータが指定されていません。")
 
 
-async def send_error_message(bot, text,plain_text=None, ctx=None, message=None):
+async def send_error_message(bot, text, plain_text=None, ctx=None, message=None):
     """
     エラーメッセージを送信する。
 
@@ -122,26 +122,25 @@ async def send_error_message(bot, text,plain_text=None, ctx=None, message=None):
     if (ctx is not None) and (message is not None):
         raise Exception("ctxとmessageが両方指定されています。")
     else:
-        embed = discord.Embed(title="⚠ エラー", description=text, color=0xff0000)
-        embed.set_footer(text=bot.user.display_name,
-                         icon_url=bot.user.avatar_url)
+        embed = discord.Embed(title="⚠ エラー", description=text, color=0xFF0000)
+        embed.set_footer(text=bot.user.display_name, icon_url=bot.user.avatar_url)
         if ctx is not None:
             embed.set_author(name=ctx.message.content)
             if plain_text is not None:
-                await ctx.send(plain_text,embed=embed)
+                await ctx.send(plain_text, embed=embed)
             else:
                 await ctx.send(embed=embed)
         elif message is not None:
             embed.set_author(name=message.content)
             if plain_text is not None:
-                await message.channel.send(plain_text,embed=embed)
+                await message.channel.send(plain_text, embed=embed)
             else:
                 await message.channel.send(embed=embed)
         else:
             raise Exception("ctxとmessageがどちらも指定されていません。")
 
 
-async def send_botmanager_role_error(bot,plain_text=None, ctx=None, message=None):
+async def send_botmanager_role_error(bot, plain_text=None, ctx=None, message=None):
     """
     BOT_MANAGER_ROLEエラーメッセージを送信する。
 
@@ -171,20 +170,19 @@ async def send_botmanager_role_error(bot,plain_text=None, ctx=None, message=None
     if (ctx is not None) and (message is not None):
         raise Exception("ctxとmessageが両方指定されています。")
     elif ctx is not None:
-        msg=f"`{discord.utils.get(ctx.message.guild.roles, id=BOT_MANAGER_ROLE).name}`ロールを持つメンバー以外はこのコマンドは使用できません。"
+        msg = f"`{discord.utils.get(ctx.message.guild.roles, id=BOT_MANAGER_ROLE).name}`ロールを持つメンバー以外はこのコマンドは使用できません。"
         if plain_text is not None:
-            await send_error_message(bot,msg,plain_text=plain_text,ctx=ctx)
+            await send_error_message(bot, msg, plain_text=plain_text, ctx=ctx)
         else:
-            await send_error_message(bot,msg,ctx=ctx)
-
+            await send_error_message(bot, msg, ctx=ctx)
 
     elif message is not None:
-        msg=f"`{discord.utils.get(message.guild.roles, id=BOT_MANAGER_ROLE).name}`ロールを持つメンバー以外はこのコマンドは使用できません。"
+        msg = f"`{discord.utils.get(message.guild.roles, id=BOT_MANAGER_ROLE).name}`ロールを持つメンバー以外はこのコマンドは使用できません。"
 
         if plain_text is not None:
-            await send_error_message(bot,msg,plain_text=plain_text,message=message)
+            await send_error_message(bot, msg, plain_text=plain_text, message=message)
         else:
-            await send_error_message(bot,msg,message=message)
+            await send_error_message(bot, msg, message=message)
 
     else:
         raise Exception("ctxとmessageがどちらも指定されていません。")
@@ -216,8 +214,7 @@ async def set_role(bot, rolename, ctx=None, message=None):
         raise Exception("ctxとmessageが両方指定されています。")
     elif ctx is not None:
         member = ctx.guild.get_member(ctx.author.id)
-        role = discord.utils.find(lambda r: r.name == rolename,
-                                  ctx.guild.roles)
+        role = discord.utils.find(lambda r: r.name == rolename, ctx.guild.roles)
         if role is None:
             msg = f"`{rolename}`というロールが見つかりません。"
             await send_error_message(bot, msg, ctx=ctx)
@@ -226,8 +223,7 @@ async def set_role(bot, rolename, ctx=None, message=None):
 
     elif message is not None:
         member = message.guild.get_member(message.author.id)
-        role = discord.utils.find(lambda r: r.name == rolename,
-                                  message.guild.roles)
+        role = discord.utils.find(lambda r: r.name == rolename, message.guild.roles)
         print(role)
         if role is None:
             msg = f"`{rolename}`というロールが見つかりません。"
@@ -236,6 +232,7 @@ async def set_role(bot, rolename, ctx=None, message=None):
             await member.add_roles(role)
     else:
         raise Exception("ctxとmessageがどちらも指定されていません。")
+
 
 async def unset_role(bot, rolename, ctx=None, message=None):
     """
@@ -263,8 +260,7 @@ async def unset_role(bot, rolename, ctx=None, message=None):
         raise Exception("ctxとmessageが両方指定されています。")
     elif ctx is not None:
         member = ctx.guild.get_member(ctx.author.id)
-        role = discord.utils.find(lambda r: r.name == rolename,
-                                  ctx.guild.roles)
+        role = discord.utils.find(lambda r: r.name == rolename, ctx.guild.roles)
         if role is None:
             msg = f"`{rolename}`というロールが見つかりません。"
             await send_error_message(bot, msg, ctx=ctx)
@@ -273,8 +269,7 @@ async def unset_role(bot, rolename, ctx=None, message=None):
 
     elif message is not None:
         member = message.guild.get_member(message.author.id)
-        role = discord.utils.find(lambda r: r.name == rolename,
-                                  message.guild.roles)
+        role = discord.utils.find(lambda r: r.name == rolename, message.guild.roles)
         if role is None:
             msg = f"`{rolename}`というロールが見つかりません。"
             await send_error_message(bot, msg, message=message)
@@ -282,6 +277,7 @@ async def unset_role(bot, rolename, ctx=None, message=None):
             await member.remove_roles(role)
     else:
         raise Exception("ctxとmessageがどちらも指定されていません。")
+
 
 async def reset_attackrole(guild):
     """
@@ -299,10 +295,8 @@ async def reset_attackrole(guild):
     None
     ```
     """
-    attacked_role = discord.utils.find(lambda r: r.name == "凸報告済",
-                                       guild.roles)
-    no_attack_role = discord.utils.find(lambda r: r.name == "凸未報告",
-                                        guild.roles)
+    attacked_role = discord.utils.find(lambda r: r.name == "凸報告済", guild.roles)
+    no_attack_role = discord.utils.find(lambda r: r.name == "凸未報告", guild.roles)
     msg = ""
     if (attacked_role is None) or (no_attack_role is None):
         if attacked_role is None:
@@ -317,6 +311,7 @@ async def reset_attackrole(guild):
             if not member.bot:
                 await member.add_roles(no_attack_role)
                 await member.remove_roles(attacked_role)
+
 
 async def clear_attackrole(guild):
     """
@@ -334,10 +329,8 @@ async def clear_attackrole(guild):
     None
     ```
     """
-    attacked_role = discord.utils.find(lambda r: r.name == "凸報告済",
-                                       guild.roles)
-    no_attack_role = discord.utils.find(lambda r: r.name == "凸未報告",
-                                        guild.roles)
+    attacked_role = discord.utils.find(lambda r: r.name == "凸報告済", guild.roles)
+    no_attack_role = discord.utils.find(lambda r: r.name == "凸未報告", guild.roles)
     msg = ""
     if (attacked_role is None) or (no_attack_role is None):
         if attacked_role is None:
