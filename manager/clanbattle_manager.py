@@ -6,6 +6,7 @@ import gspread
 import requests
 from oauth2client.service_account import ServiceAccountCredentials
 from pdf2image import convert_from_bytes
+from dateutil.relativedelta import relativedelta
 
 import load_settings
 
@@ -13,38 +14,55 @@ SPREADSHEET_URL = load_settings.SPREADSHEET_URL
 
 
 def fetch_status():
-    """
-    解析サイト<https://redive.estertion.win> からクラバト情報を取ってくる
+    # """
+    # 解析サイト<https://redive.estertion.win> からクラバト情報を取ってくる
 
-    return
-    ----
-    ```
-    {
-        "cb_start": datetime,
-        "cb_end": datetime,
-        "cb_days": int
-    }
-    ```
-    """
-    # クラバト開催情報取得
-    r = requests.get(
-        # FIXME: Issue #122
-        # "https://redive.estertion.win/ver_log_redive/?page=1&filter=clan_battle"
-        "https://raw.githubusercontent.com/Tsuuko/cbbot-py/master/tmp/cb_schedule_stub.json"
-    ).json()
+    # return
+    # ----
+    # ```
+    # {
+    #     "cb_start": datetime,
+    #     "cb_end": datetime,
+    #     "cb_days": int
+    # }
+    # ```
+    # """
 
-    # クラバト開始日取得
-    cb_start = r["data"][0]["clan_battle"][0]["start"]
-    cb_start = datetime.strptime(cb_start, "%Y/%m/%d %H:%M:%S")
 
-    # クラバト終了日取得
-    cb_end = r["data"][0]["clan_battle"][0]["end"]
-    cb_end = datetime.strptime(cb_end, "%Y/%m/%d %H:%M:%S")
+    # # クラバト開催情報取得
+    # r = requests.get(
+    #     # FIXME: Issue #122
+    #     # "https://redive.estertion.win/ver_log_redive/?page=1&filter=clan_battle"
+    #     "https://raw.githubusercontent.com/Tsuuko/cbbot-py/master/tmp/cb_schedule_stub.json"
+    # ).json()
 
-    # クラバト開催日数
-    cb_days = (cb_end - cb_start).days + 1
+    # # クラバト開始日取得
+    # cb_start = r["data"][0]["clan_battle"][0]["start"]
+    # cb_start = datetime.strptime(cb_start, "%Y/%m/%d %H:%M:%S")
 
-    return {"cb_start": cb_start, "cb_end": cb_end, "cb_days": cb_days}
+    # # クラバト終了日取得
+    # cb_end = r["data"][0]["clan_battle"][0]["end"]
+    # cb_end = datetime.strptime(cb_end, "%Y/%m/%d %H:%M:%S")
+
+    # # クラバト開催日数
+    # cb_days = (cb_end - cb_start).days + 1
+
+
+    # 現在の日付を取得
+    now = datetime.now()
+
+    # その月の最終日を取得
+    end_of_month = now + relativedelta(day=31)
+
+    # 最終日から5日前と1日前の日付を計算
+    cb_start = (end_of_month - relativedelta(days=5)).replace(
+        hour=5, minute=0, second=0, microsecond=0
+    )
+    cb_end = (end_of_month - relativedelta(days=1)).replace(
+        hour=23, minute=59, second=59, microsecond=0
+    )
+
+    return {"cb_start": cb_start, "cb_end": cb_end, "cb_days": 5}
 
 
 def get_cbday():
