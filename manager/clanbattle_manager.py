@@ -354,9 +354,9 @@ class spreadsheet:
         self._authorize()
         ws = self.sheet.worksheet("main")
         # 1日目から10日目を削除
-        self.sheet.values_clear(f"{ws.title}!B2:K{ws.row_count}")
+        self.sheet.values_clear(f"{ws.title}!C2:L{ws.row_count}")
         # メモ欄1を削除
-        self.sheet.values_clear(f"{ws.title}!N2:N{ws.row_count}")
+        self.sheet.values_clear(f"{ws.title}!O2:O{ws.row_count}")
 
 
 if __name__ == "__main__":
